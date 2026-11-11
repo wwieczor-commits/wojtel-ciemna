@@ -111,3 +111,8 @@ h1,h2,h3{font-weight:800;letter-spacing:-.035em}
 .tiny{color:var(--mut)}
 .foot{background:#070D18;border-top:1px solid var(--line)}
 .toast{background:var(--red)}
+@media (max-width:860px){
+  .hdr__nav{background:#121C2E;border-color:#2A3A58;box-shadow:0 24px 48px -16px rgba(0,0,0,.7)}
+  .hdr__nav::before{border-color:#2A3A58}
+  .hdr__nav a:not(.btn):hover,.hdr__nav a.on{background:#1C2840;color:#fff}
+}
