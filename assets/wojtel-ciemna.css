@@ -1,0 +1,112 @@
+/* WOJTEL – wariant A „Pomiar”: ciemny, techniczny. Nakłada się na wojtel.css */
+:root{
+  --navy:#0B1220;--navy-2:#121C2E;--ink:#FFFFFF;--txt:#C7CFDB;--mut:#8A96AA;--mut-d:#6E7B90;
+  --line:#1C2840;--bg:#0B1220;--bg2:#0E1729;--red:#E0452B;--red-d:#C2351C;--red-l:#FF6A4D;
+  --disp:"Inter",system-ui,sans-serif
+}
+body{background:var(--bg);color:var(--txt)}
+a{color:var(--red-l)}a:hover{color:#FF8C74}
+:focus-visible{outline-color:#FF8C74}
+::selection{background:var(--red);color:#fff}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:64px 64px}
+.hdr,main,.foot{position:relative;z-index:1}
+h1,h2,h3{font-weight:800;letter-spacing:-.035em}
+
+/* nagłówek */
+.hdr{background:rgba(11,18,32,.88)}
+.hdr.stuck{border-color:var(--line);box-shadow:none}
+.hdr__nav a:not(.btn){color:var(--txt)}
+.hdr__nav a:not(.btn):hover,.hdr__nav a.on{color:#fff}
+.hdr__btn{background:transparent;border-color:#3A4A66}
+.hdr__btn span,.hdr__btn span::before,.hdr__btn span::after{background:#fff}
+@media (max-width:860px){.hdr__nav{background:var(--bg);border-color:var(--line)}}
+
+/* przyciski: kwadratowe, przesuw białego tła */
+.btn{border-radius:4px;position:relative;overflow:hidden;isolation:isolate}
+.btn::before{content:"";position:absolute;inset:0;background:#fff;transform:translateX(-101%);transition:transform .45s var(--ease);z-index:-1}
+.btn:hover::before{transform:none}
+.btn--red,.btn--navy{background:var(--red);color:#fff}
+.btn--red:hover,.btn--navy:hover{background:var(--red);color:var(--navy);box-shadow:none}
+.btn--line{border-color:#3A4A66;color:#fff}
+.btn--line:hover{background:transparent;color:var(--navy);border-color:#fff}
+
+/* hero */
+.hero{padding:88px 0 64px}
+.hero .mono{display:flex;align-items:center;gap:10px}
+.hero .mono::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--red);animation:blink 1.6s infinite}
+.hero h1{font-weight:800;font-size:clamp(44px,6vw,86px);line-height:.98;letter-spacing:-.04em}
+.hero h1 .ln:nth-child(3)>span{color:#fff}
+.hero h1 .ln:nth-child(3)>span::after{content:"";display:inline-block;width:.42em;height:.08em;margin-left:.08em;background:var(--red);vertical-align:.08em;animation:blink 1.1s steps(1) infinite}
+.hero__bar{background:var(--red);width:72px}
+.hero__lead{color:#B4BECD}
+.hero__lead strong{color:#fff}
+
+.tomo{flex:1 1 420px;min-width:0;margin:0;display:flex;flex-direction:column;gap:12px;animation:fade 1.2s .3s both}
+.tomo__box{position:relative;aspect-ratio:1/1;max-width:480px;width:100%;align-self:center;border:1px solid var(--line);border-radius:8px;background:var(--bg2);overflow:hidden}
+.tomo__box svg{position:absolute;inset:0;width:100%;height:100%}
+.tomo__hud{position:absolute;left:14px;right:14px;top:12px;display:flex;justify-content:space-between;font-family:var(--m);font-size:11px;color:var(--mut)}
+.tomo__hud b{color:var(--red-l);font-weight:500}
+.tomo figcaption{font-family:var(--m);font-size:12px;color:var(--mut);text-align:center}
+.tomo figcaption span{color:var(--red-l)}
+.tomo__beam{transform-origin:200px 200px;animation:spin 7s linear infinite}
+.tomo__trace{stroke-dasharray:900;animation:trace 3.4s ease-out both}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes trace{from{stroke-dashoffset:900}to{stroke-dashoffset:0}}
+
+/* liczby */
+.stats{background:transparent;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.stats__in{padding-top:0;padding-bottom:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0}
+.stat{flex-direction:column;align-items:flex-start;gap:10px;padding:32px 24px 32px 0;border-right:1px solid var(--line)}
+.stat:last-child{border-right:0}
+.stat+.stat{padding-left:24px}
+.stat b{color:#fff;font-size:60px;font-weight:800;letter-spacing:-.03em}
+.stat--red b{color:var(--red-l)}
+
+/* sekcje */
+.sec--alt{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.sec__lead{color:var(--mut)}
+.about__txt .lead{color:#fff}
+.about__txt strong{color:#fff}
+.dossier{background:var(--navy-2);border:1px solid var(--line)}
+
+/* usługi jako lista */
+.cards{display:block;border-top:1px solid var(--line)}
+.card{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr) 200px;gap:8px 40px;align-items:baseline;min-height:0;padding:26px 12px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;position:relative}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);transform:scaleY(0);transition:transform .35s var(--ease)}
+.card:hover{transform:none;box-shadow:none;border-color:var(--line);background:var(--navy-2)}
+.card:hover::before{transform:scaleY(1)}
+.card h3{color:#fff;font-size:22px;order:1}
+.card p{color:#B4BECD;order:2}
+.card__pkd{order:3;color:var(--red-l);text-align:right}
+.card__go{display:none}
+.card--main{background:transparent}
+.card--main h3{color:#fff}.card--main p{color:#B4BECD}
+@media (max-width:760px){.card{grid-template-columns:1fr;gap:6px}.card__pkd{order:0;text-align:left}}
+
+/* historia */
+.tl::before{background:var(--line)}
+.tl__year{color:#fff}
+.tl__body::before{background:var(--bg);border-color:#3A4A66}
+.tl__body p{color:var(--mut)}
+.step{background:var(--bg2);border-color:var(--line)}
+.step__no{color:var(--red-l)}
+.why{border-color:var(--line)}
+.why p{color:var(--mut)}
+
+/* obszar */
+.area__map svg [fill="#0E1A2B"]{fill:#C7CFDB}
+.area__map svg text{fill:#8A96AA}
+.area__map svg text[font-weight="800"]{fill:#fff}
+.area__map svg g[stroke="#C7CED8"],.area__map svg [stroke="#C7CED8"]{stroke:#2A3A58}
+.area__txt .area__addr{color:#fff}
+
+/* kontakt */
+.contact{background:var(--bg2);border-top:1px solid var(--line)}
+.cbox,.crow{border-color:var(--line)}
+.form{background:var(--navy);border:1px solid var(--line);color:var(--txt)}
+.form h3,.fld label{color:#fff}
+.fld input,.fld select,.fld textarea{background:var(--bg2);border-color:#2A3A58;color:#fff}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--red-l);background:var(--bg2)}
+.tiny{color:var(--mut)}
+.foot{background:#070D18;border-top:1px solid var(--line)}
+.toast{background:var(--red)}
