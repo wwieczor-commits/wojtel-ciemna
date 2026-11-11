@@ -33,6 +33,11 @@
     if (ang) ang.textContent = Math.round((t / 7 * 360) % 360) + '°';
     if (conf) conf.textContent = (0.9 + 0.08 * Math.sin(t * 1.3)).toFixed(2).replace('.', ',');
   }
-  /* ilustracja statyczna – bez wirującej wiązki i pętli animacji */
-  frame(1.2);
+  if (reduce) { frame(1.2); return; }
+  var t0 = performance.now(), visible = true, last = 0;
+  if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; }).observe(grid.ownerSVGElement);
+  (function loop(now) {
+    if (visible && !d.hidden && now - last > 50) { last = now; frame((now - t0) / 1000); }
+    requestAnimationFrame(loop);
+  })(t0);
 })();
