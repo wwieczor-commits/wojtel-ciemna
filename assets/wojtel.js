@@ -35,7 +35,8 @@
   $$('[data-count], [data-years]').forEach(function (el) {
     var target = el.dataset.years ? years(el.dataset.years) : parseInt(el.dataset.count, 10);
     if (isNaN(target)) return;
-    if (reduce || !io) { el.textContent = target; return; }
+    var fmt = function (v) { return el.hasAttribute('data-sep') ? String(v).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0') : v; };
+    if (reduce || !io) { el.textContent = fmt(target); return; }
     el.textContent = '0';
     var o = new IntersectionObserver(function (es) {
       es.forEach(function (e) {
@@ -44,7 +45,7 @@
         (function step(t) {
           if (t0 === null) t0 = t;
           var k = Math.min((t - t0) / 1300, 1);
-          el.textContent = Math.round(target * (1 - Math.pow(1 - k, 3)));
+          el.textContent = fmt(Math.round(target * (1 - Math.pow(1 - k, 3))));
           if (k < 1) requestAnimationFrame(step);
         })(performance.now());
       });
@@ -99,6 +100,7 @@
     btn.addEventListener('click', function () { var o = nav.classList.toggle('open'); btn.setAttribute('aria-expanded', o ? 'true' : 'false'); });
     nav.addEventListener('click', function (e) { if (e.target.closest('a')) close(); });
     d.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    d.addEventListener('click', function (e) { if (!nav.contains(e.target) && !btn.contains(e.target)) close(); });
   }
 
   /* kopiowanie */
