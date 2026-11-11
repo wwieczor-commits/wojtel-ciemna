@@ -116,3 +116,83 @@ h1,h2,h3{font-weight:800;letter-spacing:-.035em}
   .hdr__nav::before{border-color:#2A3A58}
   .hdr__nav a:not(.btn):hover,.hdr__nav a.on{background:#1C2840;color:#fff}
 }
+
+/* poprawki: usługi – widoczna strzałka, kontakt na telefonie, stopka */
+.card__go{display:flex;order:4;grid-column:3;justify-content:flex-end;font-size:14px;color:#fff}
+.card:hover .card__go{color:var(--red-l)}
+@media (max-width:760px){.card__go{grid-column:auto;justify-content:flex-start;margin-top:6px}}
+@media (max-width:560px){
+  .crow{flex-wrap:wrap;gap:4px 16px}
+  .crow__k{flex-basis:100%}
+  .crow--big .crow__v{font-size:clamp(17px,5.6vw,22px)}
+}
+.foot a{display:inline-block;padding:10px 0}
+
+/* podstrona projektu UE */
+.pj-head{padding:56px 0 24px}
+.pj-head .wrap{display:flex;flex-direction:column;align-items:flex-start;gap:24px}
+.pj-head h1{font-size:clamp(34px,4.6vw,62px);line-height:1.04;max-width:20ch}
+.pj-lead{max-width:36em;font-size:19px;line-height:1.58;color:#B4BECD}
+.pj-back{margin-bottom:16px}
+.btn i:first-child{transition:transform .3s var(--ease)}
+.btn:hover i:first-child{transform:translateX(-4px)}
+.pj-data{padding:40px 0 96px}
+.pj-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,.85fr);gap:24px;align-items:start}
+.pj-money{margin-top:0;border-left:3px solid var(--red)}
+.pj-money::after{display:none}
+.money{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px;margin:8px 0}
+.money dt,.reg dt{font-family:var(--m);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.money dt{margin-bottom:8px}
+.money dd{margin:0;font-size:clamp(32px,4vw,46px);font-weight:800;line-height:1;letter-spacing:-.035em;color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}
+.money dd.red{color:var(--red-l)}
+.meter{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.meter i{display:block;height:100%;width:var(--w);background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform 1.6s .3s var(--ease)}
+.meter.in i{transform:scaleX(1)}
+.reg{margin:0;padding:6px 24px;border:1px solid var(--line);border-top:2px solid #fff;border-radius:0 0 8px 8px;background:var(--bg2)}
+.reg div{display:grid;grid-template-columns:8.5rem minmax(0,1fr);gap:16px;padding:14px 0;border-top:1px solid var(--line);align-items:baseline}
+.reg div:first-child{border-top:0}
+.reg dd{margin:0;color:#fff}
+.pj-about{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:40px 72px;align-items:start}
+.pj-fig{margin:0;display:flex;flex-direction:column;gap:12px}
+.pj-fig__box{aspect-ratio:4/3;border:1px solid var(--line);border-radius:8px;background:var(--bg);overflow:hidden}
+.pj-fig figcaption{font-family:var(--m);font-size:12px;color:var(--mut)}
+.pj-fig figcaption span{color:var(--red-l)}
+.pj-h2{font-size:clamp(28px,3.2vw,42px)!important;line-height:1.1!important;max-width:24ch}
+.logostrip{background:#fff;border-radius:8px;padding:clamp(12px,2.4vw,24px)}
+.logostrip img{width:100%;height:auto}
+.logostrip__half{display:none}
+.pj-cta{margin-top:32px}
+@media (max-width:900px){.pj-grid,.pj-about{grid-template-columns:1fr}}
+@media (max-width:640px){
+  .logostrip{display:grid;gap:14px;padding:14px 10px}
+  .logostrip__wide{display:none}.logostrip__half{display:block}
+  .reg div{grid-template-columns:1fr;gap:2px}
+}
+
+/* ilustracja czujnika */
+.ill{width:100%;height:100%}
+.ill .o{fill:var(--bg2);stroke:#C7CFDB;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
+.ill .fill2{fill:#16223A}
+.ill .h{fill:none;stroke:#2A3A58;stroke-width:1.2;stroke-linecap:round}
+.ill .k{fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ill .axis{fill:none;stroke:#8A96AA;stroke-width:1.5;stroke-linecap:round}
+.ill .r{stroke:var(--red)}
+.ill .fr,.ill .red{fill:var(--red)}
+.ill .fi{fill:#C7CFDB}
+.ill .cab{fill:none;stroke:#3A4A66;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ill .lab{font:500 13px var(--m);fill:var(--mut);letter-spacing:.06em}
+.ill .flow{stroke-dasharray:6 8;animation:illDash 3s linear infinite}
+.ill .nd{fill:#C7CFDB}.ill .nd.red{fill:var(--red-l);animation:blink 2.4s ease-in-out infinite}
+.ill .mesh path{fill:none;stroke:#8A96AA;stroke-width:1}
+.ill .mv,.ill .mvx{display:none}
+.ill .needle{transform-origin:190px 104px;animation:illSway 5s ease-in-out infinite}
+.js .ill .draw{stroke-dasharray:1;stroke-dashoffset:1}
+.js .in .ill .draw{animation:illDraw 2.4s var(--ease) var(--d,.3s) forwards}
+@keyframes illDash{to{stroke-dashoffset:-44}}
+@keyframes illDraw{to{stroke-dashoffset:0}}
+@keyframes illSway{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+@media (prefers-reduced-motion:reduce){.js .ill .draw{stroke-dashoffset:0}.meter i{transform:scaleX(1)}}
+
+/* wąskie telefony: lista tematów nie rozpycha strony */
+@media (max-width:900px){.contact__grid{grid-template-columns:minmax(0,1fr)}}
+.fld input,.fld select,.fld textarea{width:100%;min-width:0}
