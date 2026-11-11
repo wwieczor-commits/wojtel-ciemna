@@ -183,3 +183,45 @@ h1,h2,h3{font-weight:700;letter-spacing:-.035em}
 .ill .mesh path{fill:none;stroke:#C7CFDB;stroke-width:1;opacity:.55}
 .ill .mv,.ill .mvx{display:none}
 .ill path.o[fill="#fff"]{fill:var(--bg2)}
+
+/* ===== animacje ===== */
+.hero .mono{display:flex;align-items:center;gap:10px}
+.hero .mono::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--red);animation:blink 1.6s infinite}
+.tomo{animation:fade 1.2s .3s both}
+.tomo__beam{transform-origin:200px 200px;animation:spin 7s linear infinite}
+.tomo__trace{stroke-dasharray:900;animation:trace 3.4s ease-out both}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes trace{from{stroke-dashoffset:900}to{stroke-dashoffset:0}}
+
+.js .meter.rv{opacity:1;transform:none}
+.js .meter.rv i{transform:scaleX(0);transform-origin:left;transition:transform 1.6s .3s var(--ease)}
+.js .meter.rv.in i{transform:scaleX(1)}
+
+.ill .flow{animation:illDash 3s linear infinite}
+.ill .needle{transform-origin:190px 104px;animation:illSway 5s ease-in-out infinite}
+.ill .mesh{animation:illMesh 6s ease-in-out infinite}
+.ill .nd.red{animation:blink 2.4s ease-in-out infinite}
+.ill .red-band{animation:illBand 4s ease-in-out infinite}
+.ill .mvx{display:block;fill:var(--red-l);opacity:0;animation:illSlide 5s linear infinite var(--d,0s)}
+.js .ill .draw{stroke-dasharray:1;stroke-dashoffset:1}
+.js .in .ill .draw{animation:illDraw 2.4s var(--ease) var(--d,.3s) forwards}
+@supports (offset-path:path('M0 0')){
+  .ill .mv{display:block;fill:#fff;offset-rotate:0deg;opacity:0;animation:illMove var(--t,5s) linear infinite var(--d,0s)}
+  .ill .mv.red{fill:var(--red-l)}
+}
+@keyframes illDash{to{stroke-dashoffset:-44}}
+@keyframes illDraw{to{stroke-dashoffset:0}}
+@keyframes illSway{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+@keyframes illMesh{0%,100%{opacity:1}50%{opacity:.55}}
+@keyframes illBand{0%,100%{fill:var(--bg2)}50%{fill:rgba(224,69,43,.3)}}
+@keyframes illSlide{0%{transform:translateX(0);opacity:0}8%,88%{opacity:.9}100%{transform:translateX(480px);opacity:0}}
+@keyframes illMove{0%{offset-distance:0%;opacity:0}8%,92%{opacity:1}100%{offset-distance:100%;opacity:0}}
+@media (prefers-reduced-motion:reduce){
+  .js .ill .draw{stroke-dashoffset:0}
+  .js .meter.rv i{transform:scaleX(1)}
+  .ill .mv,.ill .mvx{display:none}
+}
+
+/* wąskie telefony: lista tematów nie rozpycha strony */
+@media (max-width:900px){.contact__grid{grid-template-columns:minmax(0,1fr)}}
+.fld input,.fld select,.fld textarea{width:100%;min-width:0}
