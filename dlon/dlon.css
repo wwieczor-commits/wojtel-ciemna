@@ -30,6 +30,8 @@ button{cursor:pointer}
 .btn-duch:hover,.btn-maly:hover{border-color:var(--zloto);color:var(--zloto)}
 .btn-maly{padding:7px 15px;font-size:14.5px}
 .btn-maly.zl{border-color:var(--zloto2);color:var(--zloto)}
+.btn-maly.stop{border-color:rgba(255,107,139,.55);color:#ff9db3}
+.btn-maly.stop:hover{border-color:var(--roz);color:#fff;background:rgba(255,107,139,.18)}
 .btn-glowny{border:0;border-radius:999px;padding:14px 34px;font-weight:700;font-size:17px;color:#1a1304;background:linear-gradient(180deg,#f7d589,#d9a544);box-shadow:0 10px 30px -10px rgba(242,198,109,.7);transition:transform .15s,box-shadow .15s}
 .btn-glowny:hover{transform:translateY(-1px);box-shadow:0 14px 34px -10px rgba(242,198,109,.85)}
 .btn-glowny:disabled{opacity:.6;cursor:progress}
