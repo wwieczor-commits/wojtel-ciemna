@@ -1,8 +1,8 @@
 /* © 2026 Wojciech Wieczorek. Wszelkie prawa zastrzeżone. */
 /* Interfejs: kamera, podgląd linii na żywo, skan, zakładki odczytu, pamięć dłoni, raport PDF. */
 import { FilesetResolver, HandLandmarker } from '../vendor/mediapipe/vision_bundle.mjs';
-import { Analizator, CW, CH, KOLORY, NAZWY, odwrotna, punkt, zgodnosc, skrot, geometria } from './analiza.js';
-import { zbudujOdczyt, METODY, ZRODLA } from './dane.js';
+import { Analizator, CW, CH, KOLORY, NAZWY, odwrotna, punkt, zgodnosc, skrot, geometria } from './analiza.js?v=3';
+import { zbudujOdczyt, METODY, ZRODLA } from './dane.js?v=3';
 
 const $ = id => document.getElementById(id);
 const h = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -11,7 +11,7 @@ const ogr = (v, a, b) => v < a ? a : v > b ? b : v;
 
 const ekran = $('ekran'), ctx = ekran.getContext('2d'), wideo = $('wideo');
 const CZAS_SPOKOJU = 900, CZAS_SKANU = 2600, PROG_ZGODNOSCI = 0.62;
-const stan = { tryb: 'start', lustro: true, przod: true, det: null, strumien: null, an: new Analizator(), lm: null, swiat: null, etykieta: '', spokojOd: 0, skanOd: 0, glos: 0, bezStrony: false, ostCzas: -1, bezDloni: 0, zak: 'wrozba', odczyt: null };
+const stan = { tryb: 'start', lustro: true, przod: true, det: null, strumien: null, an: new Analizator(), lm: null, swiat: null, etykieta: '', spokojOd: 0, skanOd: 0, glos: 0, bezStrony: false, ostatnieKody: [], ostCzas: -1, bezDloni: 0, zak: 'wrozba', odczyt: null };
 
 /* ---------- Model i kamera ---------- */
 async function wczytajModel() {
@@ -207,7 +207,10 @@ function zakoncz(zrodlo, W, H) {
   stan.wynik = stan.an.wynik(); stan.nakladka = kopia(stan.an.malujNakladke(1), CW, CH);
   stan.geo = geometria(stan.swiat || stan.lm);
   stan.rekaInfo = strona(stan.lm, stan.etykieta);
-  stan.odczyt = zbudujOdczyt(stan.wynik, stan.geo, stan.rekaInfo.reka);
+  /* Ta sama dłoń skanowana ponownie nie zmienia skali porównawczej. */
+  const znana = stan.ostatnieKody.some(k => naSkali(zgodnosc(stan.wynik.kod, k)) >= PROG_ZGODNOSCI);
+  stan.ostatnieKody.push(stan.wynik.kod); if (stan.ostatnieKody.length > 8) stan.ostatnieKody.shift();
+  stan.odczyt = zbudujOdczyt(stan.wynik, stan.geo, stan.rekaInfo.reka, { ucz: !znana });
   stan.skrot = skrot(stan.wynik.kod); stan.pieczec = pieczec(stan.wynik.kod);
   tryb('wynik'); stan.zak = 'wrozba'; pokazWynik();
   const start = performance.now();
@@ -246,6 +249,7 @@ const miara = (x, kolor) => `<div class="miara"><i style="width:${proc(ogr(x, 0,
 function trescZakladki(z) {
   const o = stan.odczyt, g = stan.geo, c = o.cechy;
   if (z === 'wrozba') return `<p class="wstep">${h(o.zywiol.opis)}</p><p><strong>${h(o.dominanta[0])}.</strong> ${h(o.dominanta[1])}</p>`
+    + (o.znaki.length ? '<h3>Co wyróżnia tę dłoń</h3><div class="znaki">' + o.znaki.map(([a, b], i) => `<div class="znak"><span>${i + 1}</span><div><strong>${h(a.charAt(0).toUpperCase() + a.slice(1))}</strong><p>${h(b)}</p></div></div>`).join('') + '</div><h3>Wróżba</h3>' : '')
     + '<div class="wrozby">' + o.przepowiednia.map(([a, b]) => `<div class="wrozba"><strong>${h(a)}</strong><p>${h(b)}</p></div>`).join('') + '</div>'
     + `<h3>Rada z dłoni</h3><p>${h(o.rada)}</p>`
     + '<div class="zetony">' + o.szczescie.map(([a, b]) => `<span class="zeton"><small>${h(a)}</small>${h(b)}</span>`).join('') + '</div>'
@@ -260,7 +264,9 @@ function trescZakladki(z) {
   if (z === 'dlon') return `<div class="linia-glowa"><div><h3>${h(o.tytul)}</h3><span>${h(o.zywiol.ksztalt)}</span></div></div><p>${h(o.zywiol.opis)}</p><p>${h(o.zywiol.cien)}</p>`
     + (o.reka ? `<p>${h(o.reka)}</p>` : '')
     + '<h3>Pomiary</h3>' + tabela([['Długość do szerokości dłoni', g.ksztalt.toFixed(2).replace('.', ',')], ['Palec środkowy do długości dłoni', g.palceDoDloni.toFixed(2).replace('.', ',')], ['Wskazujący do serdecznego (2D:4D)', g.wskDoSerd.toFixed(2).replace('.', ',')], ['Mały do serdecznego', g.malyDoSerd.toFixed(2).replace('.', ',')], ['Odstawienie kciuka', Math.round(g.katKciuka) + '°']])
-    + '<h3>Palce</h3>' + o.palce.map(([a, b]) => `<p><strong>${h(a)}.</strong> ${h(b)}</p>`).join('')
+    + '<h3>Palce</h3>' + o.palce.map(a => `<p>${h(a)}</p>`).join('')
+    + (o.czworobok ? `<h3>Czworobok – przestrzeń między linią serca a głowy</h3><p>${h(o.czworobok[1])} <span class="drobne">(odstęp: ${h(o.czworobok[0])})</span></p>` : '')
+    + `<h3>${h(o.strefa[0])}</h3><p>${h(o.strefa[1])}</p>`
     + '<p class="drobne">Proporcje liczymy z 21 punktów szkieletu dłoni. Rozstaw palców i kciuka zależy od tego, jak trzymasz dłoń przed kamerą.</p>';
   if (z === 'tozsamosc') { const por = porownania(), naj = por[0], tak = naj && naj.z >= PROG_ZGODNOSCI;
     return `<div class="tozs"><img src="${stan.pieczec}" alt="Pieczęć dłoni – graficzny zapis kierunków bruzd"><div><p class="mono zloto">Sygnatura dłoni</p><p class="kod">${stan.skrot.tekst}</p><p class="drobne">Pieczęć to zapis kierunku bruzd w 224 polach dłoni. Każda dłoń daje inny rysunek – na tej zasadzie działa biometria dłoni.</p></div></div>`
@@ -327,7 +333,9 @@ function zbudujRaport() {
   const s2 = `<div class="r-strona">${glowa('Analiza linii')}` + ['serce', 'glowa', 'zycie', 'los'].map(k => { const l = o.linie[k];
     return `<h2><span class="r-kreska" style="background:${KOLORY[k]}"></span>${NAZWY[k]} – ${h(l.skrot)}</h2><div class="r-linia"><div><p>${h(l.tekst)}</p><p><strong>Wróżba:</strong> ${h(l.wrozba)}</p></div><div>${l.pomiary.length ? tab(l.pomiary) : '<p class="r-male">Linia słabo widoczna na obrazie.</p>'}</div></div>`; }).join('') + stopka(2) + '</div>';
   const s3 = `<div class="r-strona">${glowa('Kształt dłoni i tożsamość')}<h2>${h(o.tytul)}</h2><p>${h(o.zywiol.ksztalt.charAt(0).toUpperCase() + o.zywiol.ksztalt.slice(1))}. ${h(o.zywiol.cien)}</p>`
-    + tab([['Długość do szerokości dłoni', g.ksztalt.toFixed(2).replace('.', ',')], ['Palec środkowy do długości dłoni', g.palceDoDloni.toFixed(2).replace('.', ',')], ['Wskazujący do serdecznego (2D:4D)', g.wskDoSerd.toFixed(2).replace('.', ',')]].concat(o.palce))
+    + tab([['Długość do szerokości dłoni', g.ksztalt.toFixed(2).replace('.', ',')], ['Palec środkowy do długości dłoni', g.palceDoDloni.toFixed(2).replace('.', ',')], ['Wskazujący do serdecznego (2D:4D)', g.wskDoSerd.toFixed(2).replace('.', ',')]])
+    + o.palce.map(a => `<p>${h(a)}</p>`).join('') + (o.czworobok ? `<p><strong>Czworobok:</strong> ${h(o.czworobok[1])}</p>` : '') + `<p><strong>${h(o.strefa[0])}:</strong> ${h(o.strefa[1])}</p>`
+    + (o.znaki.length ? '<h2>Co wyróżnia tę dłoń</h2>' + o.znaki.map(([a, b]) => `<p><strong>${h(a.charAt(0).toUpperCase() + a.slice(1))}.</strong> ${h(b)}</p>`).join('') : '')
     + `<h2>Sygnatura dłoni</h2><div class="r-tozs"><img src="${stan.pieczec}" alt=""><div><p class="r-kod">${stan.skrot.tekst}</p>` + tab([['Gęstość rysunku linii', proc(stan.wynik.gestosc)], ['Pola z wyraźnym kierunkiem', stan.wynik.kod.waga.filter(w => w >= 4).length + ' z 224'], ['Czytelność linii głównych', proc(c.czytelnosc)]]) + `<p class="r-male">${h(METODY[1][1])}</p></div></div>`
     + '<h2>Źródła</h2>' + `<p class="r-male">${h(ZRODLA.wstep)}</p>` + ZRODLA.nauka.map(([a, , z]) => `<p class="r-male"><strong>${h(a)}:</strong> ${h(z)}</p>`).join('') + ZRODLA.tradycja.map(([a, z]) => `<p class="r-male"><strong>${h(a)}:</strong> ${h(z)}</p>`).join('') + stopka(3) + '</div>';
   $('raport').innerHTML = s1 + s2 + s3;

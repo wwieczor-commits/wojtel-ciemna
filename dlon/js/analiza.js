@@ -146,7 +146,10 @@ export class Analizator {
     /* Gęstość rysunku: odsetek pola dłoni zajęty przez wyraźne bruzdy. */
     let pole = 0, bruzdy = 0;
     for (let y = 216; y < 390; y++) for (let x = 92; x < 236; x++) { const i = y * CW + x; if (this.maskaAcc[i] > 0.5) { pole++; if (Sn[i] > 0.9) bruzdy++; } }
-    return { linie, kod, gestosc: pole ? bruzdy / pole : 0, jasnosc: this.jasnosc, M: this.M, pkt: this.pkt };
+    /* Gęstość drobnych linii w czterech obszarach dłoni (wzgórki). */
+    const strefa = (x0, y0, x1, y1) => { let p = 0, b = 0; for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) { const i = y * CW + x; if (this.maskaAcc[i] > 0.5) { p++; if (Sn[i] > 0.8) b++; } } return p > 50 ? b / p : 0; };
+    const strefy = { wenus: strefa(192, 292, 250, 382), ksiezyc: strefa(92, 312, 142, 388), mars: strefa(142, 268, 196, 332), palce: strefa(100, 214, 226, 240) };
+    return { linie, kod, strefy, gestosc: pole ? bruzdy / pole : 0, jasnosc: this.jasnosc, M: this.M, pkt: this.pkt };
   }
 
   /* Kod orientacji: w siatce 14×16 pól wyznaczamy dominujący kierunek bruzd (tensor struktury) i jego wyrazistość. */
@@ -211,6 +214,9 @@ function sledz(pole, os, t0, t1, srodek, hw) {
 function zakres({ pkt, sila }, prog) {
   const n = pkt.length, s = new Float32Array(n);
   for (let i = 0; i < n; i++) { let a = 0, c = 0; for (let k = -4; k <= 4; k++) { const j = i + k; if (j >= 0 && j < n) { a += sila[j]; c++; } } s[i] = a / c; }
+  /* Próg względny: linia kończy się tam, gdzie słabnie wobec własnej typowej siły – dzięki temu długość jest cechą dłoni, a nie oświetlenia. */
+  const pos = Array.from(s).sort((a, b) => a - b), p70 = pos[Math.floor(n * 0.7)];
+  prog = Math.max(prog * 0.7, 0.55 * p70);
   const odc = []; let pocz = -1;
   for (let i = 0; i <= n; i++) { const jest = i < n && s[i] > prog; if (jest && pocz < 0) pocz = i; if (!jest && pocz >= 0) { odc.push([pocz, i - 1]); pocz = -1; } }
   /* Łączymy odcinki rozdzielone krótką przerwą, wybieramy najdłuższy ciąg. */
