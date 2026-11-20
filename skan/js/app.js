@@ -558,6 +558,15 @@
       }
       var bezOgonkow = stan.wynik.f.imie.replace(/[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/g, function (z) { return 'acelnoszzACELNOSZZ'.charAt('ąćęłńóśźżĄĆĘŁŃÓŚŹŻ'.indexOf(z)); });
       var nazwa = 'Raport - ' + bezOgonkow.replace(/[^A-Za-z0-9 _-]+/g, ' ').replace(/\s+/g, ' ').trim() + '.pdf';
+      /* podpis autorów na górze i na dole każdej strony */
+      var podpis = '\u00A9 2026 WOJCIECH WIECZOREK I ANNA MIKOS', stron = doc.getNumberOfPages();
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(93, 102, 127);
+      for (var nr = 1; nr <= stron; nr++) {
+        doc.setPage(nr);
+        doc.text(podpis, 105, 7.5, { align: 'center', charSpace: 0.5 });
+        doc.text(podpis, 105, 291.5, { align: 'center', charSpace: 0.5 });
+        doc.text(nr + ' / ' + stron, 210 - MARG, 291.5, { align: 'right' });
+      }
       doc.setProperties({ title: 'Raport – ' + stan.wynik.f.imie, author: 'Wojciech Wieczorek i Anna Mikos' });
       var url = URL.createObjectURL(doc.output('blob')), lacze = document.createElement('a');
       lacze.href = url; lacze.download = nazwa; document.body.appendChild(lacze); lacze.click(); lacze.remove();
