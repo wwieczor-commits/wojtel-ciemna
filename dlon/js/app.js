@@ -11,7 +11,7 @@ const ogr = (v, a, b) => v < a ? a : v > b ? b : v;
 
 const ekran = $('ekran'), ctx = ekran.getContext('2d'), wideo = $('wideo');
 const CZAS_SPOKOJU = 900, CZAS_SKANU = 2600, PROG_ZGODNOSCI = 0.62;
-const stan = { tryb: 'start', lustro: true, przod: true, det: null, strumien: null, an: new Analizator(), lm: null, swiat: null, etykieta: '', spokojOd: 0, skanOd: 0, ostCzas: -1, bezDloni: 0, zak: 'wrozba', odczyt: null };
+const stan = { tryb: 'start', lustro: true, przod: true, det: null, strumien: null, an: new Analizator(), lm: null, swiat: null, etykieta: '', spokojOd: 0, skanOd: 0, glos: 0, bezStrony: false, ostCzas: -1, bezDloni: 0, zak: 'wrozba', odczyt: null };
 
 /* ---------- Model i kamera ---------- */
 async function wczytajModel() {
@@ -58,11 +58,13 @@ async function uruchomKamere() {
 /* ---------- Ocena ułożenia dłoni ---------- */
 const odl = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
 function strona(lm, etykieta) {
-  /* Model rozpoznaje rękę po sylwetce i zakłada obraz lustrzany wnętrza dłoni – w obrazie nieodbitym etykiety są zamienione.
-     Grzbietu od wnętrza nie da się tą drogą pewnie odróżnić, dlatego prosimy o wnętrze w instrukcji. */
-  const reka = etykieta === 'Left' ? 'prawa' : etykieta === 'Right' ? 'lewa' : null;
-  return { reka };
+  /* Model rozpoznaje lewą i prawą rękę po wyglądzie. Razem ze skrętnością układu punktów (nadgarstek → palec wskazujący × nadgarstek → mały palec)
+     mówi to, którą stronę dłoni widzi kamera. Reguła sprawdzona na zdjęciach wnętrza i grzbietu obu rąk, także w odbiciu lustrzanym. */
+  const u = [lm[5][0] - lm[0][0], lm[5][1] - lm[0][1]], v = [lm[17][0] - lm[0][0], lm[17][1] - lm[0][1]];
+  const dodatnia = u[0] * v[1] - u[1] * v[0] > 0;
+  return { wnetrze: (etykieta === 'Left') === dodatnia, reka: etykieta === 'Left' ? 'lewa' : etykieta === 'Right' ? 'prawa' : null };
 }
+function odczytajReke(w) { const r = w.handednesses || w.handedness, e = r && r[0] && r[0][0]; return e ? { etykieta: e.categoryName, pewnosc: e.score || 0 } : { etykieta: '', pewnosc: 0 }; }
 function ocen(lm, W, H) {
   const szer = odl(lm[5], lm[17]), m = Math.min(W, H);
   if (lm.some(p => p[0] < 4 || p[1] < 4 || p[0] > W - 4 || p[1] > H - 4)) return 'Cała dłoń musi być w oknie';
@@ -70,6 +72,10 @@ function ocen(lm, W, H) {
   if (szer > m * 0.5) return 'Odsuń dłoń odrobinę';
   for (const [k, s] of [[8, 6], [12, 10], [16, 14], [20, 18]]) if (odl(lm[k], lm[0]) < odl(lm[s], lm[0]) * 1.08) return 'Wyprostuj i rozstaw palce';
   if (odl(lm[0], lm[9]) < szer * 0.95) return 'Ustaw dłoń płasko, przodem do kamery';
+  if (!stan.bezStrony) {
+    if (stan.glos < -0.2) return 'To grzbiet dłoni – odwróć ją wnętrzem do kamery';
+    if (stan.glos < 0.3) return 'Pokaż wyraźnie wnętrze dłoni';
+  }
   if (stan.an.jasnosc && stan.an.jasnosc < 45) return 'Za ciemno – doświetl dłoń';
   return '';
 }
@@ -91,12 +97,14 @@ function petla() {
 function klatka(w, W, H, teraz) {
   const pkt = w && w.landmarks && w.landmarks[0];
   if (!pkt) {
-    if (++stan.bezDloni > 6) { stan.lm = null; stan.an.reset(); stan.spokojOd = 0; if (stan.tryb === 'skan') tryb('live'); komunikat('Pokaż wnętrze dłoni do kamery'); postep(null); }
+    if (++stan.bezDloni > 6) { stan.lm = null; stan.glos = 0; stan.an.reset(); stan.spokojOd = 0; if (stan.tryb === 'skan') tryb('live'); komunikat('Pokaż wnętrze dłoni do kamery'); postep(null); }
     return;
   }
   stan.bezDloni = 0;
   const nowe = pkt.map(p => [p.x * W, p.y * H]);
-  const rece = w.handednesses || w.handedness; stan.etykieta = rece && rece[0] && rece[0][0] ? rece[0][0].categoryName : '';
+  const rk = odczytajReke(w); stan.etykieta = rk.etykieta;
+  /* Głosowanie z wielu klatek: wnętrze czy grzbiet (ważone pewnością modelu). */
+  stan.glos += 0.25 * ((strona(nowe, rk.etykieta).wnetrze ? 1 : -1) * rk.pewnosc - stan.glos);
   stan.swiat = w.worldLandmarks && w.worldLandmarks[0] ? w.worldLandmarks[0].map(p => [p.x, p.y, p.z]) : null;
   let ruch = 1;
   if (stan.lm) { const szer = odl(nowe[5], nowe[17]) || 1; ruch = nowe.reduce((a, p, i) => a + odl(p, stan.lm[i]), 0) / 21 / szer; stan.lm = nowe.map((p, i) => [stan.lm[i][0] + 0.6 * (p[0] - stan.lm[i][0]), stan.lm[i][1] + 0.6 * (p[1] - stan.lm[i][1])]); }
@@ -290,12 +298,14 @@ $('fPlik').addEventListener('change', async e => {
     const sk = Math.min(1, 1600 / Math.max(obraz.width, obraz.height)), W = Math.round(obraz.width * sk), H = Math.round(obraz.height * sk);
     const pl = kopia(obraz, W, H);
     await wczytajModel();
-    let w = null; for (let i = 0; i < 4; i++) w = stan.det.detectForVideo(pl, performance.now() + i * 40);
+    let w = null, glos = 0;
+    for (let i = 0; i < 4; i++) { w = stan.det.detectForVideo(pl, performance.now() + i * 40); if (w && w.landmarks && w.landmarks[0]) { const rk = odczytajReke(w); glos += (strona(w.landmarks[0].map(p => [p.x * W, p.y * H]), rk.etykieta).wnetrze ? 1 : -1) * rk.pewnosc; } }
     const pkt = w && w.landmarks && w.landmarks[0];
     if (!pkt) { tekst.innerHTML = 'Nie widzę dłoni na tym zdjęciu.<br>Wybierz zdjęcie otwartej dłoni, wnętrzem do obiektywu.'; return; }
+    if (glos <= 0 && !stan.bezStrony) { tekst.innerHTML = 'To wygląda na grzbiet dłoni.<br>Do odczytu potrzebne jest zdjęcie wnętrza dłoni – tam są linie.'; return; }
     zatrzymajStrumien();
     stan.lustro = false; stan.lm = pkt.map(p => [p.x * W, p.y * H]);
-    const rece = w.handednesses || w.handedness; stan.etykieta = rece && rece[0] && rece[0][0] ? rece[0][0].categoryName : '';
+    stan.etykieta = odczytajReke(w).etykieta;
     stan.swiat = w.worldLandmarks && w.worldLandmarks[0] ? w.worldLandmarks[0].map(p => [p.x, p.y, p.z]) : null;
     stan.an.reset(); stan.an.klatka(pl, stan.lm, 1);
     zakoncz(pl, W, H);
@@ -340,10 +350,10 @@ $('btnPdf').addEventListener('click', async () => {
 
 /* ---------- Przyciski ---------- */
 $('btnStart').addEventListener('click', uruchomKamere);
-$('btnCzytaj').addEventListener('click', () => { if (stan.lm && stan.tryb === 'live') zacznijSkan(performance.now()); else komunikat('Najpierw pokaż dłoń do kamery'); });
+$('btnCzytaj').addEventListener('click', () => { if (!stan.lm || stan.tryb !== 'live') { komunikat('Najpierw pokaż dłoń do kamery'); return; } const u = ocen(stan.lm, wideo.videoWidth, wideo.videoHeight); if (u) komunikat(u); else zacznijSkan(performance.now()); });
 $('btnKamera').addEventListener('click', async () => { stan.przod = !stan.przod; stan.lm = null; stan.an.reset(); try { await otworzStrumien(); } catch (e) { stan.przod = !stan.przod; } });
 $('btnNastepna').addEventListener('click', async () => {
-  stan.lm = null; stan.an.reset(); stan.spokojOd = 0; stan.odczyt = null;
+  stan.lm = null; stan.an.reset(); stan.spokojOd = 0; stan.odczyt = null; stan.glos = 0;
   if (stan.strumien && stan.strumien.active) { tryb('live'); komunikat('Pokaż wnętrze dłoni do kamery'); } else { tryb('start'); uruchomKamere(); }
 });
 $('btnPelny').addEventListener('click', () => { const d = document; if (d.fullscreenElement) d.exitFullscreen(); else if (d.documentElement.requestFullscreen) d.documentElement.requestFullscreen().catch(() => { }); });

@@ -24,7 +24,7 @@ export const ZYWIOLY = {
 };
 
 /* Progi geometrii (wartości z punktów szkieletu modelu). */
-const PROG_KSZTALT = 1.95, PROG_PALCE = 0.93;
+const PROG_KSZTALT = 1.75, PROG_PALCE = 0.93;
 
 /* Cechy linii z pomiarów w układzie wzorcowym. */
 export function cechyLinii(L) {
@@ -139,7 +139,7 @@ export function zbudujOdczyt(wynik, geo, reka, dzis = new Date()) {
 }
 
 export const METODY = [
-  ['Jak czytamy dłoń', 'Model wykrywania dłoni (MediaPipe Hand Landmarker, licencja Apache 2.0) wyznacza 21 punktów szkieletu. Na ich podstawie prostujemy obraz dłoni do układu wzorcowego i uśredniamy kilkadziesiąt klatek. Bruzdy to miejsca ciemniejsze od otoczenia; cztery linie główne śledzimy algorytmem najsilniejszej ścieżki w obszarach, w których występują anatomicznie.'],
+  ['Jak czytamy dłoń', 'Model wykrywania dłoni (MediaPipe Hand Landmarker, licencja Apache 2.0) wyznacza 21 punktów szkieletu. Zanim zaczniemy czytać, sprawdzamy, czy kamera widzi wnętrze dłoni, a nie grzbiet: model rozpoznaje lewą i prawą rękę, a układ punktów mówi, którą stroną jest zwrócona. Na ich podstawie prostujemy obraz dłoni do układu wzorcowego i uśredniamy kilkadziesiąt klatek. Bruzdy to miejsca ciemniejsze od otoczenia; cztery linie główne śledzimy algorytmem najsilniejszej ścieżki w obszarach, w których występują anatomicznie.'],
   ['Tożsamość i biometria', 'W kryminalistyce i biometrii porównuje się odbitki dłoni (palmprint): przebieg bruzd zgięciowych, drobne linie i listewki skórne w rozdzielczości 500 dpi i większej. Tu liczymy uproszczony kod orientacji bruzd w 224 polach dłoni. To pokaz zasady działania – kamera laptopa lub telefonu nie widzi listewek skórnych, więc wynik nie nadaje się do identyfikacji osób.'],
   ['Symbolika', 'Znaczenia linii i kształtów dłoni pochodzą z tradycji chiromancji zachodniej (Cheiro, William Benham, Casimir d\'Arpentigny). Chiromancja nie ma potwierdzenia naukowego. Przepowiednie są zabawą i pretekstem do rozmowy, nie poradą życiową, zdrowotną ani finansową.'],
   ['Prywatność', 'Obraz z kamery jest analizowany wyłącznie w przeglądarce. Nic nie jest wysyłane na serwer. Zapamiętane dłonie trzymane są tylko w pamięci tej przeglądarki i można je w każdej chwili usunąć.']
