@@ -506,7 +506,7 @@
       p.opisy.forEach(function (x) { o.push(tr(x.n, h(x.t))); });
       o.push('</table>');
     }
-    o.push('<p class="r-stopka">Symboliczny odczyt rozrywkowy – punkt wyjścia do rozmowy, nie diagnoza ani prognoza. Numerologia pitagorejska · zodiak tropikalny (Astronomy Engine) · talia Rider–Waite–Smith · pomiar jednego zdjęcia. Wygenerowano ' + new Date().toLocaleDateString('pl-PL') + ' · © Wojciech Wieczorek.</p>');
+    o.push('<p class="r-stopka">Symboliczny odczyt rozrywkowy – punkt wyjścia do rozmowy, nie diagnoza ani prognoza. Numerologia pitagorejska · zodiak tropikalny (Astronomy Engine) · talia Rider–Waite–Smith · pomiar jednego zdjęcia. Wygenerowano ' + new Date().toLocaleDateString('pl-PL') + ' · Prawa autorskie: Wojciech Wieczorek &amp; Anna Mikos. Wszelkie prawa zastrzeżone.</p>');
     $('raport').innerHTML = o.join('');
   }
   function wczytajSkrypt(src) {
@@ -558,7 +558,7 @@
       }
       var bezOgonkow = stan.wynik.f.imie.replace(/[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/g, function (z) { return 'acelnoszzACELNOSZZ'.charAt('ąćęłńóśźżĄĆĘŁŃÓŚŹŻ'.indexOf(z)); });
       var nazwa = 'Raport - ' + bezOgonkow.replace(/[^A-Za-z0-9 _-]+/g, ' ').replace(/\s+/g, ' ').trim() + '.pdf';
-      doc.setProperties({ title: 'Raport – ' + stan.wynik.f.imie, author: 'Wojciech Wieczorek' });
+      doc.setProperties({ title: 'Raport – ' + stan.wynik.f.imie, author: 'Wojciech Wieczorek & Anna Mikos' });
       var url = URL.createObjectURL(doc.output('blob')), lacze = document.createElement('a');
       lacze.href = url; lacze.download = nazwa; document.body.appendChild(lacze); lacze.click(); lacze.remove();
       setTimeout(function () { URL.revokeObjectURL(url); }, 30000);
