@@ -54,40 +54,40 @@
     var R = 300, cx = 320, cy = 320, baza = n && n.asc != null ? n.asc - 180 : 0, o = [];
     function xy(lon, r) { var a = (lon - baza) * Math.PI / 180; return [cx + r * Math.cos(a), cy - r * Math.sin(a)]; }
     function f(p) { return p[0].toFixed(1) + ',' + p[1].toFixed(1); }
-    o.push('<svg viewBox="0 0 640 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mapa nieba" font-family="Georgia,serif">');
-    o.push('<defs><radialGradient id="mg"><stop offset="0" stop-color="#24404a"/><stop offset="1" stop-color="#15232e" stop-opacity="0"/></radialGradient></defs><circle cx="320" cy="320" r="318" fill="url(#mg)"/>');
+    o.push('<svg viewBox="0 0 640 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mapa nieba" font-family="Cormorant,Georgia,serif">');
+    o.push('<defs><radialGradient id="mg"><stop offset="0" stop-color="#33296a"/><stop offset="1" stop-color="#18152f" stop-opacity="0"/></radialGradient></defs><circle cx="320" cy="320" r="318" fill="url(#mg)"/>');
     var ziarno = 7;
     for (var i = 0; i < 70; i++) { ziarno = (ziarno * 9301 + 49297) % 233280; var sx = ziarno / 233280 * 640; ziarno = (ziarno * 9301 + 49297) % 233280; var sy = ziarno / 233280 * 640; o.push('<circle cx="' + sx.toFixed(0) + '" cy="' + sy.toFixed(0) + '" r="' + (i % 5 === 0 ? 1.4 : 0.8) + '" fill="#cfd8dc" opacity=".35"/>'); }
-    [R, R - 52, R - 120, 70].forEach(function (r, k) { o.push('<circle cx="320" cy="320" r="' + r + '" fill="none" stroke="' + (k < 2 ? '#c9a66a' : '#3a4f5b') + '" stroke-width="' + (k === 0 ? 2 : 1) + '"/>'); });
+    [R, R - 52, R - 120, 70].forEach(function (r, k) { o.push('<circle cx="320" cy="320" r="' + r + '" fill="none" stroke="' + (k < 2 ? '#c4a15c' : '#3d3870') + '" stroke-width="' + (k === 0 ? 2 : 1) + '"/>'); });
     for (var s = 0; s < 12; s++) {
-      o.push('<line x1="' + f(xy(s * 30, R - 52)).replace(',', '" y1="') + '" x2="' + f(xy(s * 30, R)).replace(',', '" y2="') + '" stroke="#c9a66a" stroke-width="1"/>');
+      o.push('<line x1="' + f(xy(s * 30, R - 52)).replace(',', '" y1="') + '" x2="' + f(xy(s * 30, R)).replace(',', '" y2="') + '" stroke="#c4a15c" stroke-width="1"/>');
       var g = xy(s * 30 + 15, R - 26);
-      o.push('<text x="' + g[0].toFixed(1) + '" y="' + (g[1] + 9).toFixed(1) + '" text-anchor="middle" font-size="26" fill="#e6c382">' + S.ZNAKI[s].g + '︎</text>');
+      o.push('<text x="' + g[0].toFixed(1) + '" y="' + (g[1] + 9).toFixed(1) + '" text-anchor="middle" font-size="26" fill="#dcbb78">' + S.ZNAKI[s].g + '︎</text>');
     }
-    for (var t = 0; t < 72; t++) if (t % 6) o.push('<line x1="' + f(xy(t * 5, R - 52)).replace(',', '" y1="') + '" x2="' + f(xy(t * 5, R - 58)).replace(',', '" y2="') + '" stroke="#5c6f78" stroke-width="1"/>');
-    if (!n) { o.push('<text x="320" y="326" text-anchor="middle" font-size="18" fill="#a9b6bd" font-family="Inter,sans-serif">Podaj datę urodzenia</text></svg>'); return o.join(''); }
+    for (var t = 0; t < 72; t++) if (t % 6) o.push('<line x1="' + f(xy(t * 5, R - 52)).replace(',', '" y1="') + '" x2="' + f(xy(t * 5, R - 58)).replace(',', '" y2="') + '" stroke="#66608f" stroke-width="1"/>');
+    if (!n) { o.push('<text x="320" y="326" text-anchor="middle" font-size="18" fill="#aba5c6" font-family="Jost,sans-serif">Podaj datę urodzenia</text></svg>'); return o.join(''); }
     /* aspekty */
     n.aspekty.slice(0, 10).forEach(function (a) {
       var p1 = xy(lonOf(n, a.a.id), R - 120), p2 = xy(lonOf(n, a.b.id), R - 120);
-      o.push('<line x1="' + f(p1).replace(',', '" y1="') + '" x2="' + f(p2).replace(',', '" y2="') + '" stroke="' + (a.asp.twardy ? '#e08a6a' : a.asp.kat === 0 ? '#e6c382' : '#62d2c6') + '" stroke-width="1.2" opacity=".75"/>');
+      o.push('<line x1="' + f(p1).replace(',', '" y1="') + '" x2="' + f(p2).replace(',', '" y2="') + '" stroke="' + (a.asp.twardy ? '#e08a6a' : a.asp.kat === 0 ? '#dcbb78' : '#b7a8f0') + '" stroke-width="1.2" opacity=".75"/>');
     });
     /* planety: rozsuwanie etykiet, gdy stoją blisko siebie */
     var lista = n.ciala.map(function (x) { return { g: x.c.g, lon: x.lon, et: x.lon }; }).sort(function (a, b) { return a.lon - b.lon; });
     for (var powt = 0; powt < 6; powt++) for (var k = 1; k < lista.length; k++) if (lista[k].et - lista[k - 1].et < 9) { lista[k - 1].et -= 1.6; lista[k].et += 1.6; }
     lista.forEach(function (p) {
       var kr = xy(p.lon, R - 120), kr2 = xy(p.lon, R - 60), et = xy(p.et, R - 88);
-      o.push('<line x1="' + f(kr).replace(',', '" y1="') + '" x2="' + f(kr2).replace(',', '" y2="') + '" stroke="#4a606c" stroke-width="1"/>');
-      o.push('<circle cx="' + kr[0].toFixed(1) + '" cy="' + kr[1].toFixed(1) + '" r="4.5" fill="#e6c382"/>');
-      o.push('<text x="' + et[0].toFixed(1) + '" y="' + (et[1] + 8).toFixed(1) + '" text-anchor="middle" font-size="24" fill="#f3ead6">' + p.g + '︎</text>');
+      o.push('<line x1="' + f(kr).replace(',', '" y1="') + '" x2="' + f(kr2).replace(',', '" y2="') + '" stroke="#4d477e" stroke-width="1"/>');
+      o.push('<circle cx="' + kr[0].toFixed(1) + '" cy="' + kr[1].toFixed(1) + '" r="4.5" fill="#dcbb78"/>');
+      o.push('<text x="' + et[0].toFixed(1) + '" y="' + (et[1] + 8).toFixed(1) + '" text-anchor="middle" font-size="24" fill="#f4ecd8">' + p.g + '︎</text>');
     });
     if (n.asc != null) {
       var a1 = xy(n.asc, R + 14), m1 = xy(n.mc, R + 14);
-      o.push('<line x1="' + f(xy(n.asc, 70)).replace(',', '" y1="') + '" x2="' + f(xy(n.asc, R)).replace(',', '" y2="') + '" stroke="#f3ead6" stroke-width="1.5"/>');
-      o.push('<text x="' + a1[0].toFixed(1) + '" y="' + (a1[1] + 4).toFixed(1) + '" text-anchor="middle" font-size="12" fill="#f3ead6" font-family="monospace">ASC</text>');
-      o.push('<line x1="' + f(xy(n.mc, 70)).replace(',', '" y1="') + '" x2="' + f(xy(n.mc, R)).replace(',', '" y2="') + '" stroke="#f3ead6" stroke-width="1" stroke-dasharray="4 4"/>');
-      o.push('<text x="' + m1[0].toFixed(1) + '" y="' + (m1[1] + 4).toFixed(1) + '" text-anchor="middle" font-size="12" fill="#f3ead6" font-family="monospace">MC</text>');
+      o.push('<line x1="' + f(xy(n.asc, 70)).replace(',', '" y1="') + '" x2="' + f(xy(n.asc, R)).replace(',', '" y2="') + '" stroke="#f4ecd8" stroke-width="1.5"/>');
+      o.push('<text x="' + a1[0].toFixed(1) + '" y="' + (a1[1] + 4).toFixed(1) + '" text-anchor="middle" font-size="12" fill="#f4ecd8" font-family="monospace">ASC</text>');
+      o.push('<line x1="' + f(xy(n.mc, 70)).replace(',', '" y1="') + '" x2="' + f(xy(n.mc, R)).replace(',', '" y2="') + '" stroke="#f4ecd8" stroke-width="1" stroke-dasharray="4 4"/>');
+      o.push('<text x="' + m1[0].toFixed(1) + '" y="' + (m1[1] + 4).toFixed(1) + '" text-anchor="middle" font-size="12" fill="#f4ecd8" font-family="monospace">MC</text>');
     }
-    o.push('<circle cx="320" cy="320" r="5" fill="#e6c382"/></svg>');
+    o.push('<circle cx="320" cy="320" r="5" fill="#dcbb78"/></svg>');
     return o.join('');
   }
   function lonOf(n, id) { for (var i = 0; i < n.ciala.length; i++) if (n.ciala[i].c.id === id) return n.ciala[i].lon; return 0; }
@@ -117,7 +117,7 @@
     linia(P('polL'), P('polP'), 'rgba(240,214,160,.5)', sk * .7);
     if (wyr) {
       var sc = function (p) { return { x: p.x * W / stan.img.naturalWidth, y: p.y * H / stan.img.naturalHeight }; };
-      linia(sc(wyr.segB[0]), sc(wyr.segB[1]), '#62d2c6', sk * 3.2);
+      linia(sc(wyr.segB[0]), sc(wyr.segB[1]), '#b7a8f0', sk * 3.2);
       linia(sc(wyr.segA[0]), sc(wyr.segA[1]), '#f2c873', sk * 3.2);
     }
     S.PUNKTY.forEach(function (d) {
@@ -403,10 +403,10 @@
     o += '</dl><p class="przypis">Punkty z modelu: ' + p.zModelu + ' · wskazane ręcznie: ' + p.reczne + '</p>';
     if (p.pary.length) {
       var obw = 2 * Math.PI * 52;
-      o += '<div class="blok"><h2 style="font-size:36px">Boska proporcja</h2><div class="kolo"><svg viewBox="0 0 132 132" role="img" aria-label="' + proc(p.srednia) + '"><circle cx="66" cy="66" r="52" fill="none" stroke="#2b3e4b" stroke-width="9"/><circle cx="66" cy="66" r="52" fill="none" stroke="#e6c382" stroke-width="9" stroke-linecap="round" stroke-dasharray="' + (obw * p.srednia).toFixed(1) + ' ' + obw.toFixed(1) + '" transform="rotate(-90 66 66)"/><text x="66" y="77" text-anchor="middle" font-size="32" fill="#eef0ea" font-family="Georgia,serif">' + proc(p.srednia) + '</text></svg>' +
+      o += '<div class="blok"><h2 style="font-size:42px">Boska proporcja</h2><div class="kolo"><svg viewBox="0 0 132 132" role="img" aria-label="' + proc(p.srednia) + '"><circle cx="66" cy="66" r="52" fill="none" stroke="#343060" stroke-width="9"/><circle cx="66" cy="66" r="52" fill="none" stroke="#dcbb78" stroke-width="9" stroke-linecap="round" stroke-dasharray="' + (obw * p.srednia).toFixed(1) + ' ' + obw.toFixed(1) + '" transform="rotate(-90 66 66)"/><text x="66" y="77" text-anchor="middle" font-size="32" fill="#efe9db" font-family="Cormorant,Georgia,serif">' + proc(p.srednia) + '</text></svg>' +
         '<div><p><strong>Średnia bliskość złotej proporcji</strong></p><p class="cichy">Zmierzono ' + p.pary.length + ' z ' + S.PROPORCJE.length + ' proporcji. W granicach ±5% wzorca: ' + p.wProgu + '/' + p.pary.length + '.</p><p>Najbliżej wzorca · ' + h(p.najblizej.pr.n) + '</p></div></div>';
       o += '<div class="paski">' + ['Oczy', 'Nos', 'Usta', 'Obrys'].filter(function (g) { return p.grupy[g] != null; }).map(function (g) { return '<div class="pasekP"><span>' + g + '</span><i><b style="width:' + proc(p.grupy[g]) + '"></b></i><span class="cichy">' + proc(p.grupy[g]) + '</span></div>'; }).join('') + '</div>';
-      o += '<p><strong>Gdzie wypadają proporcje?</strong></p><p class="cichy">Kliknij parę, aby zobaczyć odcinki na zdjęciu. <span class="a-zloto">Złoty</span> i <span class="a-turkus">turkusowy</span> kolor oznaczają porównywane długości.</p><ul class="pary">';
+      o += '<p><strong>Gdzie wypadają proporcje?</strong></p><p class="cichy">Kliknij parę, aby zobaczyć odcinki na zdjęciu. <span class="a-zloto">Złoty</span> i <span class="a-lila">liliowy</span> kolor oznaczają porównywane długości.</p><ul class="pary">';
       p.pary.forEach(function (x, i) {
         o += '<li><button type="button" data-para="' + i + '" aria-pressed="' + (stan.wyr && stan.wyr.pr.id === x.pr.id) + '"><strong>' + h(x.pr.n) + '</strong><span>' + S.pl(x.v, 3) + ' / wzorzec ' + S.pl(x.pr.wz, 3) + '<br>' + (x.wProgu ? 'W progu' : 'Poza progiem') + ' · odchylenie ' + S.pl(x.odch * 100, 2) + '% · bliskość ' + proc(x.blisk) + '</span></button></li>';
       });
@@ -523,7 +523,7 @@
       var img = new Image();
       img.onload = function () {
         var c = document.createElement('canvas'); c.width = c.height = 900;
-        var x = c.getContext('2d'); x.fillStyle = '#0d1720'; x.fillRect(0, 0, 900, 900); x.drawImage(img, 0, 0, 900, 900);
+        var x = c.getContext('2d'); x.fillStyle = '#0f0d1e'; x.fillRect(0, 0, 900, 900); x.drawImage(img, 0, 0, 900, 900);
         var wyn = new Image(); wyn.onload = function () { ok(wyn); }; wyn.src = c.toDataURL('image/png');
       };
       img.onerror = function () { ok(null); };
