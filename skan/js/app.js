@@ -524,6 +524,17 @@
   $('btnPelny').addEventListener('click', function () {
     if (document.fullscreenElement) document.exitFullscreen(); else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
   });
+  $('btnCzysc').addEventListener('click', function () {
+    var f = czytaj(), jest = f.imie || f.data || stan.img || f.karty.some(function (k) { return k.id; });
+    if (jest && !window.confirm('Wyczyścić wszystkie dane, zdjęcie i wynik skanu?')) return;
+    $('form').reset(); $('blad').hidden = true;
+    document.querySelector('.wiecej').open = false;
+    $('btnUsun').click();
+    stan.wynik = null; stan.wyr = null; stan.grupa = 'oczy'; stan.komunikat = '';
+    $('wynik').hidden = true; $('formularz').hidden = false; $('raport').innerHTML = '';
+    ustawWidok('niebo'); naZywo(); odswiezGrupy();
+    $('fImie').focus();
+  });
   window.addEventListener('resize', function () { if (stan.widok === 'portret') odswiezPortret(); });
   naZywo();
 })(window.Skan);
