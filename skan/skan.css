@@ -167,6 +167,8 @@ dialog .drobne{color:var(--cichy)}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 #raport{font-family:"Inter",sans-serif;color:#1c2a33;line-height:1.45}
+#raport.r-ekran{display:block;position:absolute;left:-10000px;top:0;width:760px;background:#fff;font-size:14.5px;color-scheme:light}
+#raport.r-ekran .r-obraz{height:300px}
 #raport .r-glowa{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #c9a35c;padding-bottom:10px;margin-bottom:14px}
 #raport .r-glowa p{margin:0;font-family:var(--mono);font-size:8.5pt;letter-spacing:.1em;color:#5a676f;text-transform:uppercase}
 #raport h1{font-size:30pt;color:#1c2a33;line-height:1.05}

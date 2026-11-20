@@ -509,12 +509,67 @@
     o.push('<p class="r-stopka">Symboliczny odczyt rozrywkowy – punkt wyjścia do rozmowy, nie diagnoza ani prognoza. Numerologia pitagorejska · zodiak tropikalny (Astronomy Engine) · talia Rider–Waite–Smith · pomiar jednego zdjęcia. Wygenerowano ' + new Date().toLocaleDateString('pl-PL') + ' · © Wojciech Wieczorek.</p>');
     $('raport').innerHTML = o.join('');
   }
-  $('btnPdf').addEventListener('click', function () {
+  function wczytajSkrypt(src) {
+    return new Promise(function (ok, zle) { var s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = zle; document.head.appendChild(s); });
+  }
+  var bibPdf = null;
+  function wczytajPdf() {
+    if (!bibPdf) { bibPdf = Promise.all([wczytajSkrypt('vendor/jspdf.umd.min.js'), wczytajSkrypt('vendor/html2canvas.min.js')]); bibPdf.catch(function () { bibPdf = null; }); }
+    return bibPdf;
+  }
+  /* Mapa nieba jako obraz PNG – wektorowy SVG nie zawsze poprawnie trafia do PDF. */
+  function svgNaObraz(svg) {
+    return new Promise(function (ok) {
+      var img = new Image();
+      img.onload = function () {
+        var c = document.createElement('canvas'); c.width = c.height = 900;
+        var x = c.getContext('2d'); x.fillStyle = '#0d1720'; x.fillRect(0, 0, 900, 900); x.drawImage(img, 0, 0, 900, 900);
+        var wyn = new Image(); wyn.onload = function () { ok(wyn); }; wyn.src = c.toDataURL('image/png');
+      };
+      img.onerror = function () { ok(null); };
+      img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg.outerHTML);
+    });
+  }
+  function pobierzPdf() {
     budujRaport();
-    var stary = document.title; document.title = 'Raport – ' + stan.wynik.f.imie;
-    var img = $('raport').querySelector('img');
-    var druk = function () { window.print(); document.title = stary; };
-    if (img && !img.complete) img.onload = druk; else setTimeout(druk, 50);
+    var r = $('raport'), svg = r.querySelector('.r-obraz svg');
+    r.classList.add('r-ekran');
+    return wczytajPdf().then(function () { return svg ? svgNaObraz(svg) : null; }).then(function (obraz) {
+      if (obraz && svg) svg.parentNode.replaceChild(obraz, svg);
+      return (document.fonts && document.fonts.ready) || null;
+    }).then(function () {
+      return window.html2canvas(r, { scale: 2, backgroundColor: '#ffffff', logging: false });
+    }).then(function (plotnoR) {
+      var SK = plotnoR.width / r.offsetWidth, gora = r.getBoundingClientRect().top;
+      /* dozwolone miejsca cięcia stron: dolne krawędzie wierszy i ramek (nigdy tuż pod nagłówkiem sekcji) */
+      var ciecia = [];
+      r.querySelectorAll('tr, .r-ramka, .r-top, .r-glowa, .r-stopka').forEach(function (e) { ciecia.push(Math.round((e.getBoundingClientRect().bottom - gora) * SK)); });
+      ciecia.sort(function (a, b) { return a - b; });
+      var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' }), MARG = 12, SZER = 210 - 2 * MARG, mmNaPx = SZER / plotnoR.width;
+      var wysStr = Math.floor((297 - 2 * MARG) / mmNaPx), y = 0, pierwsza = true;
+      while (y < plotnoR.height - 2) {
+        var koniec = Math.min(y + wysStr, plotnoR.height);
+        if (koniec < plotnoR.height) { var naj = 0; ciecia.forEach(function (c) { if (c > y + 40 && c <= koniec) naj = c; }); if (naj) koniec = naj; }
+        var c = document.createElement('canvas'); c.width = plotnoR.width; c.height = koniec - y;
+        var x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(plotnoR, 0, -y);
+        if (!pierwsza) doc.addPage();
+        doc.addImage(c.toDataURL('image/jpeg', 0.92), 'JPEG', MARG, MARG, SZER, c.height * mmNaPx);
+        pierwsza = false; y = koniec;
+      }
+      var bezOgonkow = stan.wynik.f.imie.replace(/[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/g, function (z) { return 'acelnoszzACELNOSZZ'.charAt('ąćęłńóśźżĄĆĘŁŃÓŚŹŻ'.indexOf(z)); });
+      var nazwa = 'Raport - ' + bezOgonkow.replace(/[^A-Za-z0-9 _-]+/g, ' ').replace(/\s+/g, ' ').trim() + '.pdf';
+      doc.setProperties({ title: 'Raport – ' + stan.wynik.f.imie, author: 'Wojciech Wieczorek' });
+      var url = URL.createObjectURL(doc.output('blob')), lacze = document.createElement('a');
+      lacze.href = url; lacze.download = nazwa; document.body.appendChild(lacze); lacze.click(); lacze.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 30000);
+    }).then(function () { r.classList.remove('r-ekran'); }, function (e) { r.classList.remove('r-ekran'); throw e; });
+  }
+  $('btnPdf').addEventListener('click', function () {
+    var b = this, napis = b.textContent;
+    if (b.disabled) return;
+    b.disabled = true; b.textContent = 'Tworzę PDF…';
+    pobierzPdf().then(function () { b.textContent = '✓ Pobrano PDF'; }, function () { b.textContent = 'Nie udało się utworzyć PDF'; })
+      .then(function () { b.disabled = false; setTimeout(function () { b.textContent = napis; }, 2500); });
   });
   S._budujRaport = budujRaport;
 
