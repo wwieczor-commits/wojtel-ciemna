@@ -114,6 +114,14 @@ dl{margin:0}
 .kartaT h3{font-size:28px;margin:6px 0 4px}
 .kartaT p{margin:5px 0;font-size:17px}.kartaT .obraz{color:var(--cichy)}.kartaT .pytk{color:var(--atrament);font-weight:600}
 details summary{cursor:pointer;color:var(--cichy)}
+.szcz{margin-top:10px}
+.szcz summary{display:inline-flex;align-items:center;gap:6px;list-style:none;border:1px solid var(--linia2);border-radius:999px;padding:4px 14px;font-size:13.5px;font-weight:600;color:var(--burgund);background:var(--karta)}
+.szcz summary::-webkit-details-marker{display:none}
+.szcz summary::before{content:"+";font-weight:700}
+.szcz[open] summary::before{content:"–"}
+.szcz summary:hover{border-color:var(--burgund)}
+.szcz p,.blok .szcz p,.kartaT .szcz p,.ramka .szcz p{margin:10px 0 2px;padding:14px 16px;background:var(--papier);border-radius:10px;font-size:15.5px;line-height:1.6;color:var(--atrament)}
+.pary .szcz{margin:0 16px 14px}
 .kolo{display:flex;gap:22px;align-items:center;margin:14px 0 18px;flex-wrap:wrap}
 .kolo svg{width:132px;height:132px;flex:none}
 .paski{display:grid;grid-template-columns:1fr 1fr;gap:8px 28px;margin-bottom:20px}

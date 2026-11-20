@@ -325,6 +325,13 @@
     if (e.target.closest('#btnAi')) kopiujPrompt(e.target.closest('#btnAi'));
   });
 
+  function szcz(tekst) { return '<details class="szcz"><summary>Szczegóły</summary><p>' + h(tekst) + '</p></details>'; }
+  function opisCiala(c, z) { return c.pr + ' U tej osoby ' + c.n + ' jest w znaku ' + z.n + ', a ten znak opisuje się jako: ' + z.pr + '. ' + S.OBJ_STOPNIE; }
+  function opisKarty(u) {
+    return u.poz.pr + ' Wypadła karta ' + u.k.n + (u.odw ? ' do góry nogami (odwrócona) – wtedy jej temat jest przyblokowany albo przeżywany po cichu' : '') + '. Mówiąc prosto, ta karta opowiada tu o: ' + u.znaczenie + '. ' +
+      (u.k.wielka ? 'To jedna z 22 kart Wielkich Arkanów, które mówią o dużych, życiowych sprawach.' : 'To karta z koloru ' + u.k.kolor + ', który dotyczy sfery: ' + u.k.dziedzina + '.') +
+      ' Znaczenie tradycyjne – prosta: ' + u.k.up + '; odwrócona: ' + u.k.rev + '.';
+  }
   function ramkaPortretu(p) {
     if (!p || !p.pary.length) return '';
     return '<div class="ramka"><p><strong class="zloto">Bliskość złotej proporcji · ' + proc(p.srednia) + '</strong></p>' +
@@ -336,24 +343,24 @@
     var s = w.syn, o = ramkaPortretu(w.portret);
     if (!s) return o + '<p>Za mało danych do syntezy.</p>';
     var m = S.MOTYWY[s.wiodacy];
-    o += '<div class="blok"><h3>Motyw przewodni</h3><p class="pyt">Jaki temat wyłania się ze skanu?</p><p>' + m.n + ' · ' + h(m.o) + '</p></div>';
+    o += '<div class="blok"><h3>Motyw przewodni</h3><p class="pyt">Jaki temat wyłania się ze skanu?</p><p>' + m.n + ' · ' + h(m.o) + '</p>' + szcz('Każda liczba, znak zodiaku i karta w tym skanie ma przypisany jeden z ośmiu tematów. Zsumowaliśmy je i najmocniej wyszedł temat „' + m.n + '”. ' + m.pr) + '</div>';
     o += '<div class="blok"><h3>Zbieżność</h3><p class="pyt">Które metody wskazują ten sam motyw?</p><p>' +
-      (s.zbiezne.length > 1 ? h(s.opisZrodel(s.zbiezne)) : h(s.opisZrodel(s.zbiezne)) + '. <span class="cichy">Na razie tylko jedna metoda – dodaj karty albo godzinę urodzenia, żeby sprawdzić zbieżność.</span>') + '</p></div>';
+      (s.zbiezne.length > 1 ? h(s.opisZrodel(s.zbiezne)) : h(s.opisZrodel(s.zbiezne)) + '. <span class="cichy">Na razie tylko jedna metoda – dodaj karty albo godzinę urodzenia, żeby sprawdzić zbieżność.</span>') + '</p>' + szcz('Zbieżność oznacza, że różne metody – liczone niezależnie od siebie – wskazały ten sam temat. Im więcej metod się zgadza, tym wyraźniejszy jest ten temat w skanie. W nawiasach widać, która konkretnie liczba, planeta albo karta na niego wskazała.') + '</div>';
     o += '<div class="blok"><h3>Napięcie</h3><p class="pyt">Które dwa motywy ciągną w różne strony?</p>';
     if (s.napiecie) o += '<p>' + h(s.napiecie.para.zdanie) + '</p><p>' + h(s.opisZrodel(s.napiecie.zrA)) + ' ↔ ' + h(s.opisZrodel(s.napiecie.zrB)) + '</p><p><button type="button" class="link zloto" data-idz="cel">Przejdź do celu duszy →</button></p>';
     else o += '<p>W tym skanie motywy nie stoją naprzeciw siebie – odczyty układają się w jednym kierunku.</p><p><button type="button" class="link zloto" data-idz="cel">Przejdź do celu duszy →</button></p>';
-    o += '</div><p class="przypis">Porównujemy symboliczne odczyty liczb, nieba i wybranych kart. Odwrócona karta ma własny odczyt. Zdjęcie opisujemy osobno w zakładce Portret.</p>' +
+    o += szcz(s.napiecie ? 'Napięcie to dwa tematy, które są w tej osobie jednocześnie i ciągną w przeciwne strony: „' + S.MOTYWY[s.napiecie.a].n + '” i „' + S.MOTYWY[s.napiecie.b].n + '”. Z jednej strony: ' + S.MOTYWY[s.napiecie.a].pr + ' Z drugiej strony: ' + S.MOTYWY[s.napiecie.b].pr + ' To nie wada – większość ludzi ma w sobie taki spór i uczy się go godzić.' : 'Napięcie pojawia się wtedy, gdy w skanie są jednocześnie dwa przeciwstawne tematy, na przykład potrzeba planu i potrzeba zmiany. U tej osoby takiej pary nie ma.') + '</div><p class="przypis">Porównujemy symboliczne odczyty liczb, nieba i wybranych kart. Odwrócona karta ma własny odczyt. Zdjęcie opisujemy osobno w zakładce Portret.</p>' +
       '<p><button type="button" class="btn-duch" id="btnAi">✧ Skopiuj odczyt jako prompt do AI</button></p>';
     return o;
   }
   function wierszL(nazwa, x, pole) {
     if (!x) return '';
-    return '<div class="wiersz"><dt>' + nazwa + ' · ' + x.w + '</dt><dd>' + h(S.LICZBY[x.w][pole]) + '<br><small>' + h(x.opis) + '</small></dd></div>';
+    return '<div class="wiersz"><dt>' + nazwa + ' · ' + x.w + '</dt><dd>' + h(S.LICZBY[x.w][pole]) + '<br><small>' + h(x.opis) + '</small>' + szcz(S.OBJ_LICZB[pole] + ' ' + S.LICZBY[x.w].pr) + '</dd></div>';
   }
   function zakLiczby(w) {
     var n = w.num, o = '<dl>';
     o += wierszL('Droga życia', n.droga, 'dz') + wierszL('Ekspresja', n.ekspresja, 'ex') + wierszL('Potrzeba serca', n.serce, 'se') + wierszL('Wizerunek', n.wizerunek, 'wi');
-    if (n.dzien) o += '<div class="wiersz"><dt>Dzień urodzenia · ' + (n.dzien.surowy !== n.dzien.w ? n.dzien.surowy + '/' : '') + n.dzien.w + '</dt><dd>Dar dnia w tej interpretacji: ' + h(S.LICZBY[n.dzien.w].dn) + '<br><small>' + h(n.dzien.opis) + '</small></dd></div>';
+    if (n.dzien) o += '<div class="wiersz"><dt>Dzień urodzenia · ' + (n.dzien.surowy !== n.dzien.w ? n.dzien.surowy + '/' : '') + n.dzien.w + '</dt><dd>Dar dnia w tej interpretacji: ' + h(S.LICZBY[n.dzien.w].dn) + '<br><small>' + h(n.dzien.opis) + '</small>' + szcz(S.OBJ_LICZB.dn + ' ' + S.LICZBY[n.dzien.w].pr) + '</dd></div>';
     if (n.pseudonim) o += '<div class="wiersz"><dt>Pseudonim · ' + n.pseudonim.w + '</dt><dd>' + h(S.LICZBY[n.pseudonim.w].ex) + ' <span class="cichy">Opisuje tylko tę formę zapisu.</span><br><small>' + h(n.pseudonim.opis) + '</small></dd></div>';
     o += '<div class="wiersz"><dt>Litery i wartości</dt><dd><small>' + h(n.litery) + '</small></dd></div></dl>';
     o += '<p class="przypis">Współczesna numerologia zachodnia (pitagorejska). Litery A–Z mają wartości od 1 do 9. Każdą część imienia i nazwiska oraz miesiąc, dzień i rok redukujemy osobno; zachowujemy 11, 22 i 33. Polskie znaki zapisujemy w formie podstawowej, np. Ł → L. Zdania do odczytu są autorską interpretacją.</p>';
@@ -362,18 +369,18 @@
   function zakNiebo(w) {
     var n = w.niebo; if (!n) return '<p>Brak danych do mapy nieba.</p>';
     var o = '<dl>';
-    if (n.asc != null) { var za = S.ZNAKI[Math.floor(n.asc / 30)]; o += '<div class="wiersz"><dt>Ascendent · ' + za.n + ' ' + S.pl(n.asc % 30, 1) + '°</dt><dd>Pierwsze wrażenie i styl bycia. Na wejściu widać kogoś, kto działa ' + h(za.styl) + '.</dd></div>'; }
+    if (n.asc != null) { var za = S.ZNAKI[Math.floor(n.asc / 30)]; o += '<div class="wiersz"><dt>Ascendent · ' + za.n + ' ' + S.pl(n.asc % 30, 1) + '°</dt><dd>Pierwsze wrażenie i styl bycia. Na wejściu widać kogoś, kto działa ' + h(za.styl) + '.' + szcz(S.OBJ_ASC + ' U tej osoby to ' + za.n + ', a ten znak opisuje się jako: ' + za.pr + '.') + '</dd></div>'; }
     n.ciala.forEach(function (x) {
       if (x.c.pok) return;
       if (x.warianty.length > 1) {
-        o += '<div class="wiersz"><dt>' + x.c.n + ' · możliwe warianty</dt><dd>' + h(x.c.rola) + ' ' + x.warianty.map(function (z) { return S.ZNAKI[z].n + ' — ' + h(S.tekstCiala(x.c, S.ZNAKI[z])); }).join('<br>') + '<br><small>Tego dnia ' + x.c.n + ' zmienia znak. Podaj godzinę urodzenia, żeby rozstrzygnąć.</small></dd></div>';
+        o += '<div class="wiersz"><dt>' + x.c.n + ' · możliwe warianty</dt><dd>' + h(x.c.rola) + ' ' + x.warianty.map(function (z) { return S.ZNAKI[z].n + ' — ' + h(S.tekstCiala(x.c, S.ZNAKI[z])); }).join('<br>') + '<br><small>Tego dnia ' + x.c.n + ' zmienia znak. Podaj godzinę urodzenia, żeby rozstrzygnąć.</small>' + szcz(x.c.pr + ' Akurat tego dnia ' + x.c.n + ' przechodzi z jednego znaku do drugiego, więc bez godziny urodzenia nie wiadomo, który jest właściwy. Możliwości: ' + x.warianty.map(function (z) { return S.ZNAKI[z].n + ' (' + S.ZNAKI[z].pr + ')'; }).join('; ') + '.') + '</dd></div>';
       } else {
         var z = S.ZNAKI[x.znak];
-        o += '<div class="wiersz"><dt>' + x.c.n + ' · ' + z.n + ' ' + S.pl(x.st, 1) + '°' + (x.wstecz ? ' ℞' : '') + '</dt><dd>' + h(x.c.rola) + ' ' + h(S.tekstCiala(x.c, z)) + (x.dom ? ' <small>Dom ' + x.dom + '.</small>' : '') + '</dd></div>';
+        o += '<div class="wiersz"><dt>' + x.c.n + ' · ' + z.n + ' ' + S.pl(x.st, 1) + '°' + (x.wstecz ? ' ℞' : '') + '</dt><dd>' + h(x.c.rola) + ' ' + h(S.tekstCiala(x.c, z)) + (x.dom ? ' <small>Dom ' + x.dom + '.</small>' : '') + szcz(opisCiala(x.c, z)) + '</dd></div>';
       }
     });
     n.aspekty.slice(0, 6).forEach(function (a) {
-      o += '<div class="wiersz"><dt>' + a.a.n + ' / ' + a.b.n + ' · ' + a.asp.n + '</dt><dd>Temat układu: ' + h(a.a.t) + ' i ' + h(a.b.t) + '. ' + h(a.asp.cz) + '<br><small>Odchylenie od dokładnego kąta: ' + S.pl(a.orb, 1) + '°.' + (n.maCzas ? '' : ' Układ mieści się w przyjętej tolerancji przez cały dzień urodzenia.') + '</small></dd></div>';
+      o += '<div class="wiersz"><dt>' + a.a.n + ' / ' + a.b.n + ' · ' + a.asp.n + '</dt><dd>Temat układu: ' + h(a.a.t) + ' i ' + h(a.b.t) + '. ' + h(a.asp.cz) + '<br><small>Odchylenie od dokładnego kąta: ' + S.pl(a.orb, 1) + '°.' + (n.maCzas ? '' : ' Układ mieści się w przyjętej tolerancji przez cały dzień urodzenia.') + '</small>' + szcz('Aspekt to kąt między dwiema planetami na niebie w chwili urodzenia. ' + a.asp.pr + ' Tutaj spotykają się: ' + a.a.t + ' (' + a.a.n + ') oraz ' + a.b.t + ' (' + a.b.n + ').') + '</dd></div>';
     });
     var pok = n.ciala.filter(function (x) { return x.c.pok; }).map(function (x) { return x.c.n + ' · ' + S.ZNAKI[x.znak].n; }).join(', ');
     o += '<div class="wiersz"><dt>Tło pokolenia</dt><dd><small>' + pok + '. Te planety stoją w jednym znaku przez lata, więc opisują rocznik, a nie osobę.</small></dd></div>';
@@ -386,7 +393,7 @@
     if (!k.uklad.length) return '<p>Nie wybrano kart. Wróć do danych („Edytuj dane”) i wskaż karty wylosowane na wizji albo użyj przycisku „Wylosuj 3 karty”.</p>';
     var o = k.uklad.map(function (u) {
       return '<div class="kartaT"><p class="poz">' + u.poz.tyt + ' · ' + (u.odw ? 'odwrócona' : 'prosta') + '</p><h3>' + h(u.k.n) + '</h3><p class="obraz">' + h(u.k.obraz) + '</p><p>' + h(u.odczyt) + '</p><p class="pytk">' + h(u.k.pyt) + '</p>' +
-        '<details><summary>Znaczenie tradycyjne</summary><p class="cichy">Prosta: ' + h(u.k.up) + '.<br>Odwrócona: ' + h(u.k.rev) + '.</p></details></div>';
+        szcz(opisKarty(u)) + '</div>';
     }).join('');
     o += '<dl>';
     k.watki.forEach(function (t) { o += '<div class="wiersz"><dt>Wspólny wątek</dt><dd>' + h(t) + '</dd></div>'; });
@@ -399,16 +406,16 @@
     if (!stan.img) return '<p>Nie dodano portretu. Wróć do danych („Edytuj dane”) i wybierz zdjęcie – najlepiej twarz na wprost, równo oświetloną.</p>';
     if (!p) return '<p>Zdjęcie jest wczytane, ale nie ma jeszcze punktów. Oznacz je na podglądzie po lewej.</p>';
     var o = '<dl>';
-    p.opisy.forEach(function (x) { o += '<div class="wiersz"><dt>' + x.n + '</dt><dd>' + h(x.t) + '</dd></div><div class="wiersz"><dt>Do widzów</dt><dd>' + h(x.q) + '</dd></div>'; });
+    p.opisy.forEach(function (x) { o += '<div class="wiersz"><dt>' + x.n + '</dt><dd>' + h(x.t) + szcz(S.OBJ_PORTRET[x.n]) + '</dd></div><div class="wiersz"><dt>Do widzów</dt><dd>' + h(x.q) + '</dd></div>'; });
     o += '</dl><p class="przypis">Punkty z modelu: ' + p.zModelu + ' · wskazane ręcznie: ' + p.reczne + '</p>';
     if (p.pary.length) {
       var obw = 2 * Math.PI * 52;
       o += '<div class="blok"><h2 style="font-size:28px">Boska proporcja</h2><div class="kolo"><svg viewBox="0 0 132 132" role="img" aria-label="' + proc(p.srednia) + '"><circle cx="66" cy="66" r="52" fill="none" stroke="#e7dfd0" stroke-width="9"/><circle cx="66" cy="66" r="52" fill="none" stroke="#8a2c3b" stroke-width="9" stroke-linecap="round" stroke-dasharray="' + (obw * p.srednia).toFixed(1) + ' ' + obw.toFixed(1) + '" transform="rotate(-90 66 66)"/><text x="66" y="77" text-anchor="middle" font-size="28" font-weight="600" fill="#1b2440" font-family="Figtree,sans-serif">' + proc(p.srednia) + '</text></svg>' +
-        '<div><p><strong>Średnia bliskość złotej proporcji</strong></p><p class="cichy">Zmierzono ' + p.pary.length + ' z ' + S.PROPORCJE.length + ' proporcji. W granicach ±5% wzorca: ' + p.wProgu + '/' + p.pary.length + '.</p><p>Najbliżej wzorca · ' + h(p.najblizej.pr.n) + '</p></div></div>';
+        '<div><p><strong>Średnia bliskość złotej proporcji</strong></p><p class="cichy">Zmierzono ' + p.pary.length + ' z ' + S.PROPORCJE.length + ' proporcji. W granicach ±5% wzorca: ' + p.wProgu + '/' + p.pary.length + '.</p><p>Najbliżej wzorca · ' + h(p.najblizej.pr.n) + '</p></div></div>' + szcz(S.OBJ_PROP);
       o += '<div class="paski">' + ['Oczy', 'Nos', 'Usta', 'Obrys'].filter(function (g) { return p.grupy[g] != null; }).map(function (g) { return '<div class="pasekP"><span>' + g + '</span><i><b style="width:' + proc(p.grupy[g]) + '"></b></i><span class="cichy">' + proc(p.grupy[g]) + '</span></div>'; }).join('') + '</div>';
       o += '<p><strong>Gdzie wypadają proporcje?</strong></p><p class="cichy">Kliknij parę, aby zobaczyć odcinki na zdjęciu. <span class="a-zloto">Burgundowy</span> i <span class="a-lila">granatowy</span> kolor oznaczają porównywane długości.</p><ul class="pary">';
       p.pary.forEach(function (x, i) {
-        o += '<li><button type="button" data-para="' + i + '" aria-pressed="' + (stan.wyr && stan.wyr.pr.id === x.pr.id) + '"><strong>' + h(x.pr.n) + '</strong><span>' + S.pl(x.v, 3) + ' / wzorzec ' + S.pl(x.pr.wz, 3) + '<br>' + (x.wProgu ? 'W progu' : 'Poza progiem') + ' · odchylenie ' + S.pl(x.odch * 100, 2) + '% · bliskość ' + proc(x.blisk) + '</span></button></li>';
+        o += '<li><button type="button" data-para="' + i + '" aria-pressed="' + (stan.wyr && stan.wyr.pr.id === x.pr.id) + '"><strong>' + h(x.pr.n) + '</strong><span>' + S.pl(x.v, 3) + ' / wzorzec ' + S.pl(x.pr.wz, 3) + '<br>' + (x.wProgu ? 'W progu' : 'Poza progiem') + ' · odchylenie ' + S.pl(x.odch * 100, 2) + '% · bliskość ' + proc(x.blisk) + '</span></button>' + szcz('Porównujemy dwa odcinki na zdjęciu i dzielimy długość jednego przez długość drugiego. Wyszło ' + S.pl(x.v, 3) + ', a „złoty” wzorzec to ' + S.pl(x.pr.wz, 3) + ', czyli różnica wynosi ' + S.pl(x.odch * 100, 1) + '%. ' + (x.wProgu ? 'To bardzo blisko wzorca.' : 'To zupełnie normalne: mało która twarz mieści się w tym wzorcu.') + ' Wynik nie mówi nic o urodzie ani o charakterze.') + '</li>';
       });
       o += '</ul></div>';
     }
@@ -423,10 +430,10 @@
   }
   function zakCel(w) {
     var c = daneCelu(w); if (!c) return '<p>Za mało danych.</p>';
-    var s = w.syn, o = '<div class="ramka"><p><strong>' + h(c.tyt) + '</strong></p><p><strong>Jaki jest cel duszy?</strong></p><p class="duze">' + h(c.cel) + '</p></div>';
-    o += '<div class="blok"><h3>Lekcja na tę drogę</h3><p>' + h(c.lekcja) + '</p></div>';
-    o += '<div class="blok"><h3>Wybór w codziennym życiu</h3><p>' + h(c.wybor) + '</p></div>';
-    o += '<div class="blok"><h3>Pytanie na wizję</h3><p>' + h(c.pytanie) + '</p></div>';
+    var s = w.syn, o = '<div class="ramka"><p><strong>' + h(c.tyt) + '</strong></p><p><strong>Jaki jest cel duszy?</strong></p><p class="duze">' + h(c.cel) + '</p>' + szcz(s.napiecie ? S.OBJ_CEL.cel : S.OBJ_CEL.celJeden) + '</div>';
+    o += '<div class="blok"><h3>Lekcja na tę drogę</h3><p>' + h(c.lekcja) + '</p>' + szcz(S.OBJ_CEL.lekcja) + '</div>';
+    o += '<div class="blok"><h3>Wybór w codziennym życiu</h3><p>' + h(c.wybor) + '</p>' + szcz(S.OBJ_CEL.wybor) + '</div>';
+    o += '<div class="blok"><h3>Pytanie na wizję</h3><p>' + h(c.pytanie) + '</p>' + szcz(S.OBJ_CEL.pytanie) + '</div>';
     var nap = w.karty.uklad.filter(function (u) { return u.poz.id === 'napiecie'; })[0];
     if (nap) o += '<div class="ramka" style="border-color:var(--linia);background:transparent"><p><strong>Karta w pozycji napięcia · ' + h(nap.k.n) + ' (' + (nap.odw ? 'odwrócona' : 'prosta') + ')</strong></p><p>' + h(nap.odczyt) + '</p></div>';
     o += '<details><summary>Skąd ten odczyt?</summary><p class="cichy">' + skadCel(w) + '</p></details>';
