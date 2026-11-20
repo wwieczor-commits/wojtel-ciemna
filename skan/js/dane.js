@@ -245,3 +245,101 @@ window.Skan = window.Skan || {};
     ['Chicago', 41.88, -87.63, 'America/Chicago'], ['Toronto', 43.65, -79.38, 'America/Toronto'], ['Los Angeles', 34.05, -118.24, 'America/Los_Angeles']
   ];
 })(window.Skan);
+
+/* ---------- Opisy „po ludzku” do rozwijanych szczegółów ---------- */
+(function (S) {
+  'use strict';
+  var M = {
+    inicjatywa: 'To ktoś, kto woli zacząć sam, niż czekać, aż zdecyduje ktoś inny. Lubi mieć wpływ na to, co i kiedy robi, i źle znosi stanie w miejscu.',
+    wiez: 'To ktoś, dla kogo najważniejsi są ludzie obok. Dobrze czuje się we dwoje albo w zgranej grupie i sporo robi, żeby wszyscy się dogadali.',
+    ekspresja: 'To ktoś, kto lubi być widziany i słyszany: opowiadać, tworzyć, występować. Nabiera energii, kiedy ma publiczność – choćby jedną osobę.',
+    namysl: 'To ktoś, kto potrzebuje pobyć sam ze swoimi myślami. Zanim coś powie albo zrobi, woli to spokojnie przemyśleć i zrozumieć.',
+    struktura: 'To ktoś, kto lubi mieć plan i porządek. Czuje się pewnie, gdy wie, co będzie jutro, a zaczęte sprawy doprowadza do końca.',
+    swoboda: 'To ktoś, kto potrzebuje zmian i przestrzeni. Rutyna szybko go męczy, a nowe miejsca, ludzie i pomysły dodają mu sił.',
+    troska: 'To ktoś, kto odruchowo dba o innych. Zauważa, komu jest trudno, i chce, żeby to, co robi, było komuś potrzebne.',
+    moc: 'To ktoś, kto chce widzieć efekty i mieć na coś realny wpływ. Nie boi się odpowiedzialności ani dużych zadań.'
+  };
+  Object.keys(M).forEach(function (k) { S.MOTYWY[k].pr = M[k]; });
+
+  var L = {
+    1: 'Jedynka to liczba początku i samodzielności. Mówiąc prosto: człowiek, który woli prowadzić, niż iść za kimś, i najlepiej czuje się, gdy sam decyduje.',
+    2: 'Dwójka to liczba pary i współpracy. Mówiąc prosto: człowiek, który najlepiej działa z kimś, potrafi słuchać i godzić ludzi.',
+    3: 'Trójka to liczba słowa i radości. Mówiąc prosto: człowiek towarzyski i pomysłowy, który lubi opowiadać, tworzyć i rozbawiać innych.',
+    4: 'Czwórka to liczba porządku i pracy. Mówiąc prosto: człowiek solidny i cierpliwy, na którym można polegać, bo robi rzeczy po kolei i do końca.',
+    5: 'Piątka to liczba zmiany i wolności. Mówiąc prosto: człowiek ciekawy świata, który szybko się nudzi i potrzebuje ruchu oraz nowych wrażeń.',
+    6: 'Szóstka to liczba domu i odpowiedzialności. Mówiąc prosto: człowiek ciepły i opiekuńczy, dla którego najważniejsi są bliscy.',
+    7: 'Siódemka to liczba namysłu. Mówiąc prosto: człowiek dociekliwy, trochę samotnik, który lubi wiedzieć „dlaczego” i potrzebuje czasu dla siebie.',
+    8: 'Ósemka to liczba siły i pieniędzy. Mówiąc prosto: człowiek ambitny i zorganizowany, który chce osiągać konkretne wyniki.',
+    9: 'Dziewiątka to liczba pomagania i szerokiego spojrzenia. Mówiąc prosto: człowiek wyrozumiały, który chce robić coś dobrego dla innych.',
+    11: 'Jedenastka to tak zwana liczba mistrzowska – nie skraca się jej do 2. Mówiąc prosto: człowiek bardzo wrażliwy, z silną intuicją, który potrafi inspirować innych, ale łatwo się przeciąża.',
+    22: 'Dwadzieścia dwa to liczba mistrzowska – nie skraca się jej do 4. Mówiąc prosto: człowiek z wielkimi planami, który ma też dość praktyczności, żeby je zrealizować.',
+    33: 'Trzydzieści trzy to liczba mistrzowska – nie skraca się jej do 6. Mówiąc prosto: człowiek o wielkim sercu, który bierze na siebie troskę o innych, czasem aż za bardzo.'
+  };
+  Object.keys(L).forEach(function (k) { S.LICZBY[k].pr = L[k]; });
+  S.OBJ_LICZB = {
+    dz: 'Droga życia to najważniejsza liczba w numerologii. Powstaje z całej daty urodzenia: dodajemy cyfry dnia, miesiąca i roku, aż zostanie jedna liczba. Opisuje główny temat, który wraca przez całe życie – coś jak kierunek, w którym człowiek idzie.',
+    ex: 'Ekspresja powstaje ze wszystkich liter imienia i nazwiska – każda litera ma swoją wartość od 1 do 9. Opisuje naturalne talenty i sposób, w jaki człowiek działa na co dzień.',
+    se: 'Potrzeba serca powstaje z samych samogłosek imienia i nazwiska (A, E, I, O, U, Y). Opisuje to, czego człowiek naprawdę pragnie w środku – nawet jeśli o tym nie mówi.',
+    wi: 'Wizerunek powstaje z samych spółgłosek imienia i nazwiska. Opisuje pierwsze wrażenie: to, jak widzą tę osobę ludzie, którzy jej jeszcze dobrze nie znają.',
+    dn: 'Dzień urodzenia to dodatkowa liczba – mały, konkretny talent, który człowiek dostał „w prezencie” i który przydaje się w codziennych sytuacjach.'
+  };
+
+  var Z = ['energiczny, niecierpliwy i odważny – najpierw działa, potem się zastanawia',
+    'spokojny, wytrwały i przywiązany do wygody – nie lubi pośpiechu ani nagłych zmian',
+    'ciekawski, rozmowny i szybki – interesuje się wszystkim po trochu',
+    'uczuciowy, rodzinny i opiekuńczy – mocno przeżywa i długo pamięta',
+    'pewny siebie, serdeczny i hojny – lubi być zauważony i doceniony',
+    'dokładny, pracowity i praktyczny – widzi szczegóły, których inni nie zauważają',
+    'uprzejmy, towarzyski i ugodowy – szuka zgody i nie lubi kłótni',
+    'intensywny, skryty i zdeterminowany – jak się za coś bierze, to na całego',
+    'optymistyczny, otwarty i szczery – lubi podróże, wolność i duże plany',
+    'poważny, ambitny i cierpliwy – krok po kroku dochodzi do celu',
+    'niezależny, oryginalny i przyjacielski – chodzi własnymi drogami',
+    'wrażliwy, marzycielski i współczujący – dużo czuje i ma bogatą wyobraźnię'];
+  S.ZNAKI.forEach(function (z, i) { z.pr = Z[i]; });
+
+  var C = {
+    Sun: 'Słońce to ten „znak zodiaku”, który większość osób zna z horoskopów. Opisuje charakter i to, co człowieka napędza.',
+    Moon: 'Księżyc opisuje emocje: jak człowiek reaguje odruchowo i czego potrzebuje, żeby poczuć się bezpiecznie.',
+    Mercury: 'Merkury opisuje sposób myślenia i mówienia: jak człowiek się uczy, rozmawia i podejmuje decyzje.',
+    Venus: 'Wenus opisuje to, co człowiek lubi i jak okazuje uczucia – w miłości, w przyjaźni i w guście.',
+    Mars: 'Mars opisuje energię do działania: jak człowiek walczy o swoje, jak się złości i jak zabiera się do pracy.',
+    Jupiter: 'Jowisz opisuje, w czym człowiekowi sprzyja szczęście i gdzie łatwo się rozwija. Zmienia znak mniej więcej raz na rok, więc jest wspólny dla całego rocznika.',
+    Saturn: 'Saturn opisuje to, co przychodzi z trudem i wymaga cierpliwości – życiowe lekcje i obowiązki. Zostaje w jednym znaku około dwóch i pół roku.'
+  };
+  S.CIALA.forEach(function (c) { if (C[c.id]) c.pr = C[c.id]; });
+  S.OBJ_ASC = 'Ascendent to znak zodiaku, który wschodził na horyzoncie dokładnie w chwili urodzenia. Opisuje pierwsze wrażenie i sposób bycia. Zmienia się mniej więcej co dwie godziny, dlatego potrzebna jest dokładna godzina i miejsce urodzenia.';
+  S.OBJ_STOPNIE = 'Liczba ze stopniami mówi tylko, w którym miejscu znaku stoi planeta – każdy znak ma 30 stopni.';
+
+  var A = {
+    'koniunkcja': 'Dwie planety stoją na niebie tuż obok siebie, więc ich tematy działają razem, jak jeden.',
+    'sekstyl': 'Planety dzieli 60 stopni. To łagodne, pomocne połączenie – jedno ułatwia drugie, jeśli się z tego skorzysta.',
+    'kwadratura': 'Planety stoją pod kątem prostym (90 stopni). Ich tematy sobie przeszkadzają, co daje wewnętrzne napięcie, ale też energię do działania.',
+    'trygon': 'Planety dzieli 120 stopni. To najłatwiejsze połączenie – te dwie sfery życia zgodnie ze sobą współpracują.',
+    'opozycja': 'Planety stoją dokładnie naprzeciw siebie (180 stopni). Człowiek bywa rozdarty między dwiema potrzebami i uczy się je godzić.'
+  };
+  S.ASPEKTY.forEach(function (a) { a.pr = A[a.n]; });
+
+  var P = {
+    wizerunek: 'Pierwsza karta mówi o tym, jak tę osobę widzą inni – co pokazuje na zewnątrz.',
+    naped: 'Druga karta mówi o tym, co tę osobę napędza – po co rano wstaje i o co się stara.',
+    napiecie: 'Trzecia karta mówi o tym, co tę osobę uwiera albo hamuje – gdzie toczy się w niej wewnętrzny spór.'
+  };
+  S.POZYCJE.forEach(function (p) { p.pr = P[p.id]; });
+
+  S.OBJ_PORTRET = {
+    'Oczy': 'Zmierzyliśmy odległość między źrenicami i porównaliśmy ją z szerokością twarzy. To zwykły pomiar na zdjęciu – nie mówi nic o charakterze.',
+    'Brwi': 'Sprawdziliśmy, jak wysoko nad okiem jest brew. Wystarczy unieść brwi albo zmrużyć oczy, żeby wynik się zmienił.',
+    'Nos': 'Porównaliśmy szerokość i długość nosa z odległością między źrenicami. Zdjęcie zrobione z bliska optycznie powiększa nos, więc wynik zależy też od aparatu.',
+    'Usta': 'Sprawdziliśmy, czy linia ust jest równoległa do linii oczu i jak szerokie są usta. Uśmiech albo mówienie całkowicie zmieniają ten pomiar.',
+    'Obrys': 'Porównaliśmy szerokość twarzy na wysokości policzków i żuchwy oraz jej wysokość. Fryzura, zarost i światło mocno wpływają na to, co widać.'
+  };
+  S.OBJ_PROP = 'Złota proporcja to liczba około 1,618, którą od starożytności uważa się za „harmonijną”. Sprawdzamy 7 par odcinków na twarzy i liczymy, jak blisko tej liczby wypadają – 100% oznaczałoby idealną zgodność. Symetria pokazuje, jak bardzo lewa i prawa strona twarzy są do siebie podobne na tym jednym zdjęciu. Żaden z tych wyników nie jest oceną urody.';
+  S.OBJ_CEL = {
+    cel: 'Cel duszy to nasze określenie na najważniejsze zadanie, jakie wynika ze skanu. Bierzemy dwa tematy, które się w tej osobie ścierają, i szukamy sposobu, żeby je pogodzić, zamiast wybierać jeden.',
+    celJeden: 'Cel duszy to nasze określenie na najważniejsze zadanie, jakie wynika ze skanu. U tej osoby wszystkie odczyty wskazują w jedną stronę, więc cel wynika wprost z głównego tematu.',
+    lekcja: 'Lekcja to coś, czego ta osoba uczy się przez całe życie – rzecz, która nie przychodzi sama, ale z czasem wychodzi coraz lepiej.',
+    wybor: 'To praktyczna podpowiedź: mała rzecz, którą można zrobić w zwykły dzień, żeby pogodzić oba tematy.',
+    pytanie: 'To pytanie do zadania gościowi albo widzom. Nie ma na nie dobrej ani złej odpowiedzi – ma otworzyć rozmowę.'
+  };
+})(window.Skan);
