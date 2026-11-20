@@ -1,4 +1,4 @@
-/* © 2026 WOJTEL Wojciech Wieczorek. Wszelkie prawa zastrzeżone. */
+/* © 2026 Wojciech Wieczorek. Wszelkie prawa zastrzeżone. */
 /* Silnik obliczeń: numerologia, mapa nieba, karty, geometria portretu, synteza. Bez dostępu do DOM. */
 (function (S) {
   'use strict';

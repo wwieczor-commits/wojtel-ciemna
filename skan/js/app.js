@@ -1,4 +1,4 @@
-/* © 2026 WOJTEL Wojciech Wieczorek. Wszelkie prawa zastrzeżone. */
+/* © 2026 Wojciech Wieczorek. Wszelkie prawa zastrzeżone. */
 /* Interfejs panelu: formularz, podgląd na żywo, zakładki wyniku, raport PDF. */
 (function (S) {
   'use strict';
@@ -506,7 +506,7 @@
       p.opisy.forEach(function (x) { o.push(tr(x.n, h(x.t))); });
       o.push('</table>');
     }
-    o.push('<p class="r-stopka">Symboliczny odczyt rozrywkowy – punkt wyjścia do rozmowy, nie diagnoza ani prognoza. Numerologia pitagorejska · zodiak tropikalny (Astronomy Engine) · talia Rider–Waite–Smith · pomiar jednego zdjęcia. Wygenerowano ' + new Date().toLocaleDateString('pl-PL') + ' · © WOJTEL Wojciech Wieczorek.</p>');
+    o.push('<p class="r-stopka">Symboliczny odczyt rozrywkowy – punkt wyjścia do rozmowy, nie diagnoza ani prognoza. Numerologia pitagorejska · zodiak tropikalny (Astronomy Engine) · talia Rider–Waite–Smith · pomiar jednego zdjęcia. Wygenerowano ' + new Date().toLocaleDateString('pl-PL') + ' · © Wojciech Wieczorek.</p>');
     $('raport').innerHTML = o.join('');
   }
   $('btnPdf').addEventListener('click', function () {

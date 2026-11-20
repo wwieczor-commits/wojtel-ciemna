@@ -1,4 +1,4 @@
-/* © 2026 WOJTEL Wojciech Wieczorek. Wszelkie prawa zastrzeżone. */
+/* © 2026 Wojciech Wieczorek. Wszelkie prawa zastrzeżone. */
 /* Dane słownikowe panelu: motywy, liczby, znaki, karty, miejscowości. */
 window.Skan = window.Skan || {};
 (function (S) {
