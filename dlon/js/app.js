@@ -21,7 +21,7 @@ async function wczytajModel() {
   try { stan.det = await HandLandmarker.createFromOptions(pliki, opcje('GPU')); }
   catch (e) { stan.det = await HandLandmarker.createFromOptions(pliki, opcje('CPU')); }
 }
-function zatrzymajStrumien() { if (stan.strumien) { stan.strumien.getTracks().forEach(t => t.stop()); stan.strumien = null; } }
+function zatrzymajStrumien() { if (stan.strumien) { stan.strumien.getTracks().forEach(t => t.stop()); stan.strumien = null; } wideo.srcObject = null; $('btnKamera').hidden = true; }
 async function otworzStrumien() {
   zatrzymajStrumien();
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('brak-kamery');
@@ -37,6 +37,7 @@ function tryb(t) {
   stan.tryb = t; document.querySelector('.okno').dataset.tryb = t;
   $('start').hidden = t !== 'start'; $('scena').classList.toggle('pusta', t === 'start');
   $('btnCzytaj').hidden = t !== 'live'; $('btnNastepna').hidden = t !== 'wynik';
+  $('btnStop').hidden = !(stan.strumien && stan.strumien.active);
   $('oknoStan').textContent = { start: 'Gotowe', live: 'Podgląd na żywo', skan: 'Skanowanie…', wynik: 'Odczyt gotowy' }[t];
   if (t !== 'wynik') { $('wynik').hidden = true; $('instrukcja').hidden = false; }
   if (t === 'start' || t === 'wynik') { komunikat(''); postep(null); }
@@ -352,6 +353,13 @@ $('btnPdf').addEventListener('click', async () => {
 $('btnStart').addEventListener('click', uruchomKamere);
 $('btnCzytaj').addEventListener('click', () => { if (!stan.lm || stan.tryb !== 'live') { komunikat('Najpierw pokaż dłoń do kamery'); return; } const u = ocen(stan.lm, wideo.videoWidth, wideo.videoHeight); if (u) komunikat(u); else zacznijSkan(performance.now()); });
 $('btnKamera').addEventListener('click', async () => { stan.przod = !stan.przod; stan.lm = null; stan.an.reset(); try { await otworzStrumien(); } catch (e) { stan.przod = !stan.przod; } });
+$('btnStop').addEventListener('click', () => {
+  /* Wyłącza kamerę (gaśnie też dioda). Gotowy odczyt zostaje na ekranie. */
+  zatrzymajStrumien(); stan.lm = null; stan.an.reset(); stan.spokojOd = 0; stan.glos = 0;
+  if (stan.tryb === 'wynik') { tryb('wynik'); return; }
+  $('start').querySelector('.start-tekst').innerHTML = 'Kamera zatrzymana.<br>Możesz ją uruchomić ponownie w każdej chwili.';
+  tryb('start');
+});
 $('btnNastepna').addEventListener('click', async () => {
   stan.lm = null; stan.an.reset(); stan.spokojOd = 0; stan.odczyt = null; stan.glos = 0;
   if (stan.strumien && stan.strumien.active) { tryb('live'); komunikat('Pokaż wnętrze dłoni do kamery'); } else { tryb('start'); uruchomKamere(); }
