@@ -1,4 +1,4 @@
-/* © 2026 Wojciech Wieczorek. Wszelkie prawa zastrzeżone. */
+/* © 2026 Wojciech Wieczorek i Anna Mikos. Wszelkie prawa zastrzeżone. */
 /* Interfejs: kamera, podgląd linii na żywo, skan, zakładki odczytu, pamięć dłoni, raport PDF. */
 import { FilesetResolver, HandLandmarker } from '../vendor/mediapipe/vision_bundle.mjs';
 import { Analizator, CW, CH, KOLORY, NAZWY, odwrotna, punkt, zgodnosc, skrot, geometria } from './analiza.js?v=3';
@@ -325,7 +325,7 @@ let bibPdf = null;
 function zbudujRaport() {
   const o = stan.odczyt, g = stan.geo, c = o.cechy, data = new Date().toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' });
   const glowa = t => `<div class="r-glowa"><div><p>Czytanie z dłoni · raport</p><h1>${h(t)}</h1></div><p>${data} · sygnatura ${stan.skrot.tekst}</p></div>`;
-  const stopka = n => `<div class="r-stopka"><span>Symboliczny odczyt rozrywkowy – nie jest poradą ani narzędziem identyfikacji</span><span>© 2026 Wojciech Wieczorek · strona ${n} z 3</span></div>`;
+  const stopka = n => `<div class="r-stopka"><span>Symboliczny odczyt rozrywkowy – nie jest poradą ani narzędziem identyfikacji</span><span>© 2026 Wojciech Wieczorek i Anna Mikos · strona ${n} z 3</span></div>`;
   const tab = w => '<table>' + w.map(([a, b]) => `<tr><td>${h(a)}</td><td>${h(b)}</td></tr>`).join('') + '</table>';
   const s1 = `<div class="r-strona">${glowa(o.tytul)}<div class="r-top"><div class="r-obraz"><img src="${ekran.toDataURL('image/jpeg', 0.9)}" alt=""></div><div><p>${h(o.zywiol.opis)}</p><p><strong>${h(o.dominanta[0])}.</strong> ${h(o.dominanta[1])}</p>${o.reka ? `<p class="r-male">${h(o.reka)}</p>` : ''}</div></div>`
     + '<h2>Wróżba</h2>' + o.przepowiednia.map(([a, b]) => `<div class="r-ramka"><strong>${h(a)}</strong>${h(b)}</div>`).join('')

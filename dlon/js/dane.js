@@ -1,4 +1,4 @@
-/* © 2026 Wojciech Wieczorek. Wszelkie prawa zastrzeżone. */
+/* © 2026 Wojciech Wieczorek i Anna Mikos. Wszelkie prawa zastrzeżone. */
 /* Znaczenia chiromantyczne i budowa odczytu. Opisy według tradycji zachodniej chiromancji (m.in. Cheiro, W. Benham, d'Arpentigny). */
 
 const proc = x => Math.round(x * 100) + '%';
