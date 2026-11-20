@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="author" content="Wojciech Wieczorek">
+<title>Kwantowy skan osobowości – panel prowadzącego</title>
+<meta name="description" content="Symboliczny odczyt rozrywkowy: numerologia, mapa nieba, tarot i geometria portretu. Wszystko liczone lokalnie w przeglądarce.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="skan.css">
+</head>
+<body>
+<div class="strona">
+  <header class="pasek">
+    <span class="marka"><span class="marka-znak" aria-hidden="true">✦</span> Skan osobowości</span>
+    <div class="pasek-akcje">
+      <button type="button" class="btn-duch" id="btnCzysc">✕ Wyczyść wszystko</button>
+      <button type="button" class="btn-duch" id="btnMetody2">ⓘ Metody i źródła</button>
+      <button type="button" class="btn-duch" id="btnPelny">⛶ Pełny ekran</button>
+    </div>
+  </header>
+
+  <div class="naglowek">
+    <div>
+      <p class="mono etykieta">Panel prowadzącego</p>
+      <h1>Kwantowy skan <em>osobowości</em></h1>
+    </div>
+    <p class="mono stan"><span class="kropka"></span> Odczyt lokalny</p>
+  </div>
+
+  <main class="uklad">
+    <section class="karta podglad" id="podglad" aria-label="Podgląd na żywo">
+      <div class="podglad-glowa">
+        <div>
+          <p class="mono etykieta zloto">Podgląd na żywo</p>
+          <h2 id="podTytul">Mapa nieba</h2>
+        </div>
+        <div class="przelacznik" role="tablist" aria-label="Widok podglądu">
+          <button type="button" role="tab" data-widok="niebo" aria-selected="true">Niebo</button>
+          <button type="button" role="tab" data-widok="portret" aria-selected="false">Portret</button>
+        </div>
+      </div>
+      <div class="scena" id="scenaNiebo"></div>
+      <div class="scena" id="scenaPortret" hidden>
+        <div class="pusto" id="portretPusto">
+          <span class="pierscien" aria-hidden="true"></span>
+          <p>Wybierz portret w formularzu, aby<br>zobaczyć siatkę pomiarową.</p>
+        </div>
+        <div id="portretRob" hidden>
+          <canvas id="plotno" aria-label="Portret z siatką pomiarową"></canvas>
+          <div class="narzedzia">
+            <label class="rzad">Obszar do oznaczenia
+              <select id="selGrupa"></select>
+            </label>
+            <p id="portretStan" class="podpowiedz" aria-live="polite"></p>
+            <div class="przyciski">
+              <button type="button" class="btn-maly" id="btnWykryj">Wykryj punkty ponownie</button>
+              <button type="button" class="btn-maly" id="btnCofnij">Cofnij punkt tej grupy</button>
+              <button type="button" class="btn-maly" id="btnWyczysc">Wyczyść grupę</button>
+              <button type="button" class="btn-maly" id="btnUsun">Usuń zdjęcie</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="skanowanie" id="skanowanie" hidden><span></span><p class="mono">Skanowanie…</p></div>
+      <div class="podglad-stopka">
+        <div><strong id="stImie">—</strong><span id="stData">Podaj dane po prawej</span></div>
+        <span class="mono zloto" id="stTag">ZODIAK TROPIKALNY</span>
+      </div>
+    </section>
+
+    <section class="karta formularz" id="formularz" aria-label="Dane do skanu">
+      <h2>Dane do skanu</h2>
+      <form id="form" novalidate>
+        <label class="pole">Imiona i nazwisko urodzeniowe
+          <input type="text" id="fImie" autocomplete="off" placeholder="np. Anna Maria Kowalska" required>
+        </label>
+        <div class="dwa">
+          <label class="pole">Data urodzenia
+            <input type="date" id="fData" min="1900-01-01" required>
+          </label>
+          <label class="pole">Miejscowość
+            <input type="text" id="fMiasto" list="listaMiast" autocomplete="off" placeholder="np. Rzeszów">
+            <datalist id="listaMiast"></datalist>
+          </label>
+        </div>
+        <details class="wiecej">
+          <summary>Godzina urodzenia i ustawienia imienia</summary>
+          <div class="dwa">
+            <label class="pole">Godzina urodzenia (czas lokalny)
+              <input type="time" id="fGodz">
+            </label>
+            <label class="pole">Pseudonim lub obecne nazwisko
+              <input type="text" id="fPseudo" autocomplete="off" placeholder="opcjonalnie">
+            </label>
+          </div>
+          <div class="trzy">
+            <label class="pole">Szerokość geogr.
+              <input type="number" id="fSzer" step="0.01" min="-90" max="90" placeholder="50.04">
+            </label>
+            <label class="pole">Długość geogr.
+              <input type="number" id="fDl" step="0.01" min="-180" max="180" placeholder="22.00">
+            </label>
+            <label class="pole">Strefa czasowa
+              <select id="fStrefa"></select>
+            </label>
+          </div>
+          <p class="drobne">Bez godziny liczymy pozycje na południe i pokazujemy możliwe warianty, jeśli ciało zmienia znak w ciągu dnia. Ascendent wymaga godziny i współrzędnych; dla miejscowości z listy uzupełnią się same.</p>
+        </details>
+
+        <fieldset class="karty-pole">
+          <legend>Karty wylosowane na wizji <button type="button" class="link" id="btnLosuj">Wylosuj 3 karty</button></legend>
+          <div class="trzy" id="kartyWybor"></div>
+        </fieldset>
+
+        <div class="portret-pole">
+          <strong id="plikNazwa">Portret · opcjonalnie</strong>
+          <label class="link" for="fPlik">+ Wybierz zdjęcie</label>
+          <input type="file" id="fPlik" accept="image/*" hidden>
+        </div>
+        <p class="drobne">Po dodaniu zdjęcia przeglądarka wczyta model i spróbuje oznaczyć punkty. Zdjęcie pozostaje na komputerze – nic nie jest wysyłane.</p>
+
+        <p class="blad" id="blad" role="alert" hidden></p>
+        <button type="submit" class="btn-glowny"><span>Uruchom skan</span><span aria-hidden="true">⟶</span></button>
+      </form>
+    </section>
+
+    <section class="karta wynik" id="wynik" aria-label="Wynik skanu" hidden>
+      <div class="wynik-glowa">
+        <div>
+          <p class="mono etykieta zloto">Wynik skanu</p>
+          <h2 id="wynikImie"></h2>
+        </div>
+        <div class="przyciski">
+          <button type="button" class="btn-duch" id="btnPdf">⤓ Pobierz raport PDF</button>
+          <button type="button" class="btn-duch" id="btnEdytuj">← Edytuj dane</button>
+        </div>
+      </div>
+      <div class="zakladki" role="tablist" id="zakladki">
+        <button type="button" role="tab" data-zak="synteza" aria-selected="true">Synteza</button>
+        <button type="button" role="tab" data-zak="liczby" aria-selected="false">Liczby</button>
+        <button type="button" role="tab" data-zak="niebo" aria-selected="false">Niebo</button>
+        <button type="button" role="tab" data-zak="karty" aria-selected="false">Karty</button>
+        <button type="button" role="tab" data-zak="portret" aria-selected="false">Portret</button>
+        <button type="button" role="tab" data-zak="cel" aria-selected="false">Cel duszy</button>
+      </div>
+      <div id="zakTresc"></div>
+    </section>
+  </main>
+
+  <nav class="kafle" aria-label="Metody">
+    <button type="button" class="kafel" data-zak="liczby"><span class="ikona">№</span><span><strong>Numerologia</strong><small id="kafNum">Imię i data</small></span></button>
+    <button type="button" class="kafel" data-zak="niebo"><span class="ikona">☉</span><span><strong>Astrologia</strong><small id="kafAst">Mapa urodzeniowa</small></span></button>
+    <button type="button" class="kafel" data-zak="karty"><span class="ikona">◇</span><span><strong>Tarot</strong><small id="kafTar">0 z 3 kart</small></span></button>
+    <button type="button" class="kafel" data-zak="portret"><span class="ikona">⌖</span><span><strong>Geometria twarzy</strong><small id="kafGeo">Oczekuje na portret</small></span></button>
+  </nav>
+
+  <footer class="stopka mono">
+    <span>Symboliczny odczyt rozrywkowy</span>
+    <button type="button" class="btn-mono" id="btnMetody">Metody i źródła</button>
+    <span>© 2026 Wojciech Wieczorek</span>
+  </footer>
+</div>
+
+<dialog id="metody">
+  <form method="dialog"><button class="zamknij" aria-label="Zamknij">×</button></form>
+  <h2>Metody i źródła</h2>
+  <p class="drobne">To zabawa i punkt wyjścia do rozmowy, a nie diagnoza. Numerologia, astrologia i tarot nie mają potwierdzenia naukowego; pomiary twarzy opisują jedno zdjęcie, nie człowieka.</p>
+  <h3>Liczby</h3>
+  <p>Współczesna numerologia zachodnia (pitagorejska). Litery A–Z mają wartości 1–9 według klasycznej tabeli; polskie znaki zapisujemy w formie podstawowej (Ł → L, Ó → O). Każde imię i nazwisko oraz miesiąc, dzień i rok redukujemy osobno, a dopiero potem sumujemy. Liczb 11, 22 i 33 nie redukujemy. Samogłoski: A, E, I, O, U, Y. Metodę opisują m.in. Hans Decoz („Numerology: Key to Your Inner Self”) i Juno Jordan.</p>
+  <h3>Niebo</h3>
+  <p>Zodiak tropikalny, pozycje geocentryczne. Długości ekliptyczne Słońca, Księżyca i planet liczy biblioteka <em>Astronomy Engine</em> (Don Cross, licencja MIT), sprawdzana względem efemeryd NASA JPL i biblioteki NOVAS – z dokładnością rzędu minuty kątowej. Ascendent i medium coeli wg wzorów z „Astronomical Algorithms” Jeana Meeusa; domy w systemie całych znaków. Czas lokalny przeliczamy na UTC z bazy stref czasowych IANA (z historycznymi zmianami czasu). Aspekty: koniunkcja, sekstyl, kwadratura, trygon, opozycja; orby 8°/4°/7°/7°/8° (+1° dla Słońca i Księżyca).</p>
+  <h3>Karty</h3>
+  <p>Talia Rider–Waite–Smith (1909): opisy obrazów według ilustracji Pameli Colman Smith, znaczenia według tradycji opisanej przez A. E. Waite’a w „The Pictorial Key to the Tarot” (1910, domena publiczna). Zdania do odczytu są autorską interpretacją zależną od pozycji karty.</p>
+  <h3>Portret</h3>
+  <p>Punkty twarzy wyznacza model 68 punktów charakterystycznych (biblioteka face-api, licencja MIT), działający w całości w przeglądarce. Każdy punkt można poprawić ręcznie. Porównujemy 7 par odcinków ze złotą proporcją (1,618 i jej odwrotnością 0,618): bliskość = mniejsza wartość / większa, próg zgodności ±5%. Badania antropometryczne pokazują, że realne twarze rzadko trzymają się złotej proporcji i że nie jest ona miarą urody – dlatego traktujemy ją tylko jako ciekawostkę.</p>
+  <h3>Synteza i cel duszy</h3>
+  <p>Każda liczba, znak i karta ma przypisany jeden z ośmiu motywów. Sumujemy wagi (np. droga życia 3, Słońce 3, karta 2) i wybieramy motyw najsilniejszy; napięcie to para przeciwstawnych motywów, w której oba są obecne. Zdjęcie nie wchodzi do syntezy. Przypisania motywów są autorskie.</p>
+</dialog>
+
+<section id="raport" aria-hidden="true"></section>
+
+<script src="vendor/astronomy.browser.min.js"></script>
+<script src="js/dane.js"></script>
+<script src="js/silnik.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
