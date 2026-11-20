@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Logo: nadgryziona gruszka z liniami dłoni">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbe3a4"/><stop offset="1" stop-color="#cf9a35"/></linearGradient>
+    <mask id="m"><rect width="64" height="64" fill="#fff"/><circle cx="48.5" cy="33" r="8"/></mask>
+  </defs>
+  <g mask="url(#m)">
+    <path fill="url(#g)" d="M32 15c-4 0-5.5 4-6 9-.5 6-8 10.5-9.5 19C15 52.5 22 59 32 59s17-6.5 15.5-16C46 34.5 38.5 30 38 24c-.5-5-2-9-6-9z"/>
+    <path fill="none" stroke="#0b0f1f" stroke-width="1.9" stroke-linecap="round" d="M23 40c5-3.5 11-3.5 16.5-.5M21.5 46c6.5-1 12.5 1 18.5 6M21.5 46c5 1 8.2 5 8.8 11"/>
+  </g>
+  <path fill="none" stroke="#cf9a35" stroke-width="2.4" stroke-linecap="round" d="M32 15c0-4 1.2-7 3.8-9.5"/>
+  <path fill="#8fd19e" d="M32.3 11.8C28 5.5 21 6 18.5 8.5c3 5.2 9.3 6.3 13.8 3.3z"/>
+</svg>

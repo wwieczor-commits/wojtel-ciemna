@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="author" content="Wojciech Wieczorek">
+<meta name="theme-color" content="#0b0f1f">
+<title>Czytanie z dłoni – chiromancja: skan linii wnętrza dłoni i wróżba</title>
+<meta name="description" content="Pokaż dłoń do kamery: system podświetli linie dłoni, policzy jej sygnaturę i odczyta symbolikę według tradycji chiromancji. Wszystko liczone lokalnie w przeglądarce.">
+<link rel="icon" href="favicon.svg?v=2" type="image/svg+xml">
+<link rel="stylesheet" href="dlon.css?v=1">
+</head>
+<body>
+<div class="strona">
+  <header class="pasek">
+    <span class="marka"><svg class="logo" viewBox="0 0 64 64" role="img" aria-label="Logo: nadgryziona gruszka z liniami dłoni"><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbe3a4"/><stop offset="1" stop-color="#cf9a35"/></linearGradient><mask id="lm"><rect width="64" height="64" fill="#fff"/><circle cx="48.5" cy="33" r="8"/></mask></defs><g mask="url(#lm)"><path fill="url(#lg)" d="M32 15c-4 0-5.5 4-6 9-.5 6-8 10.5-9.5 19C15 52.5 22 59 32 59s17-6.5 15.5-16C46 34.5 38.5 30 38 24c-.5-5-2-9-6-9z"/><path fill="none" stroke="#0b0f1f" stroke-width="1.9" stroke-linecap="round" d="M23 40c5-3.5 11-3.5 16.5-.5M21.5 46c6.5-1 12.5 1 18.5 6M21.5 46c5 1 8.2 5 8.8 11"/></g><path fill="none" stroke="#cf9a35" stroke-width="2.4" stroke-linecap="round" d="M32 15c0-4 1.2-7 3.8-9.5"/><path fill="#8fd19e" d="M32.3 11.8C28 5.5 21 6 18.5 8.5c3 5.2 9.3 6.3 13.8 3.3z"/></svg> Czytanie z dłoni</span>
+    <div class="przyciski">
+      <button type="button" class="btn-duch" id="btnZrodla">ⓘ Źródła i metody</button>
+      <button type="button" class="btn-duch" id="btnPelny">⛶ Pełny ekran</button>
+    </div>
+  </header>
+
+  <div class="naglowek">
+    <div>
+      <p class="mono zloto">Chiromancja · linie wnętrza dłoni · tożsamość</p>
+      <h1>Co mówi <em>Twoja dłoń</em></h1>
+      <p class="podtytul">Pokaż wnętrze dłoni do kamery. System podświetli jej linie, policzy sygnaturę i odczyta je według chiromancji – tradycji wróżenia z dłoni.</p>
+    </div>
+    <p class="mono stan"><span class="kropka"></span> Odczyt lokalny · nic nie wysyłamy</p>
+  </div>
+
+  <main class="uklad">
+    <section class="okno" aria-label="Okno kamery">
+      <div class="okno-belka">
+        <span class="swiatla" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="mono" id="oknoTytul">Oko chiromanty</span>
+        <span class="mono zloto" id="oknoStan">Gotowe</span>
+      </div>
+      <div class="scena" id="scena">
+        <canvas id="ekran" aria-label="Obraz dłoni z podświetlonymi liniami"></canvas>
+        <video id="wideo" playsinline muted autoplay></video>
+        <div class="rogi" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <div class="start" id="start">
+          <svg class="reka" viewBox="0 0 200 240" aria-hidden="true">
+            <path class="obrys" d="M62 232c-8-22-22-40-34-62-8-15-14-30-8-36 7-6 18 4 28 20l8 12V60c0-16 20-16 20 0v54-78c0-16 21-16 21 0v78-66c0-16 21-16 21 0v70-46c0-15 20-15 20 0v84c0 34-10 56-18 82z"/>
+            <path class="l1" d="M66 128c22-12 52-14 84-4"/><path class="l2" d="M62 150c26-6 54 0 82 18"/><path class="l3" d="M96 124c-18 26-20 62-6 100"/><path class="l4" d="M112 222c-2-32 2-60 6-90"/>
+          </svg>
+          <p class="start-tekst">Uruchom kamerę i pokaż wnętrze dłoni.<br>Palce lekko rozstawione, dobre światło.</p>
+          <button type="button" class="btn-glowny" id="btnStart">Uruchom kamerę</button>
+          <label class="link" for="fPlik">albo wybierz zdjęcie dłoni</label>
+          <input type="file" id="fPlik" accept="image/*" hidden>
+        </div>
+        <p class="komunikat" id="komunikat" role="status" aria-live="polite" hidden></p>
+        <div class="postep" id="postep" hidden><i></i></div>
+      </div>
+      <div class="okno-stopka">
+        <div class="legenda" aria-label="Legenda linii">
+          <span><i style="background:#ff6b8b"></i>serce</span><span><i style="background:#5cc8ff"></i>głowa</span><span><i style="background:#6ee7a0"></i>życie</span><span><i style="background:#f2c66d"></i>los</span>
+        </div>
+        <div class="przyciski">
+          <button type="button" class="btn-maly" id="btnCzytaj" hidden>Czytaj teraz</button>
+          <button type="button" class="btn-maly" id="btnKamera" hidden>⟲ Zmień kamerę</button>
+          <button type="button" class="btn-maly zl" id="btnNastepna" hidden>Następna osoba →</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel" aria-label="Odczyt">
+      <div id="instrukcja">
+        <p class="mono zloto">Jak to działa</p>
+        <h2>Trzy kroki do odczytu</h2>
+        <ol class="kroki">
+          <li><strong>Pokaż wnętrze dłoni</strong><span>Tę stronę, na której są linie – nie grzbiet. System sam to sprawdza i grzbietu nie odczyta. Cała dłoń ma mieścić się w oknie.</span></li>
+          <li><strong>Przytrzymaj chwilę</strong><span>System sam zacznie skan, gdy dłoń będzie nieruchoma. Trwa to około trzech sekund.</span></li>
+          <li><strong>Przeczytaj odczyt</strong><span>Dostaniesz analizę każdej linii, sygnaturę dłoni, wróżbę i raport PDF do pobrania.</span></li>
+        </ol>
+        <div class="ramka">
+          <p><strong>Dwa spojrzenia na te same linie.</strong> Biometria i kryminalistyka traktują układ linii dłoni jako znak tożsamości – u każdego jest inny. Tradycja ezoteryczna czyta w nich charakter i los. Pokazujemy jedno i drugie, i mówimy uczciwie, co jest pomiarem, a co symbolem.</p>
+        </div>
+        <p class="drobne">Wróżba jest zabawą, nie poradą. Obraz z kamery nie opuszcza tego urządzenia.</p>
+      </div>
+      <div id="wynik" hidden>
+        <div class="wynik-glowa">
+          <div><p class="mono zloto" id="wynikNad">Odczyt z dłoni</p><h2 id="wynikTytul"></h2></div>
+          <button type="button" class="btn-duch" id="btnPdf">⤓ Raport PDF</button>
+        </div>
+        <div class="zakladki" role="tablist" id="zakladki"></div>
+        <div id="zakTresc" role="tabpanel"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="stopka mono">
+    <span>Symboliczny odczyt rozrywkowy</span>
+    <span>© 2026 Wojciech Wieczorek</span>
+  </footer>
+</div>
+
+<dialog id="zrodla">
+  <form method="dialog"><button class="zamknij" aria-label="Zamknij">×</button></form>
+  <h2>Źródła i metody</h2>
+  <div id="zrodlaTresc"></div>
+</dialog>
+
+<section id="raport" aria-hidden="true"></section>
+<script type="module" src="js/app.js?v=1"></script>
+</body>
+</html>
