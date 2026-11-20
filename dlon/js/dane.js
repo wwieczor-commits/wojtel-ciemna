@@ -23,124 +23,194 @@ export const ZYWIOLY = {
     rada: 'Zaufaj pierwszemu przeczuciu w sprawie, którą odkładasz. Woda wie, którędy płynąć, zanim zobaczy koryto.' }
 };
 
-/* Progi geometrii (wartości z punktów szkieletu modelu). */
-const PROG_KSZTALT = 1.75, PROG_PALCE = 0.93;
+/* ---------- Miary indywidualne ----------
+   Każdą dłoń opisujemy zestawem liczb (długości, kąty, odstępy, gęstość rysunku). Zamiast sztywnych progów porównujemy je
+   ze skalą, która uczy się z dłoni zeskanowanych na tym urządzeniu – dzięki temu odczyt pokazuje, czym TA dłoń różni się od innych. */
+const PRZED = { // punkt wyjścia skali: [średnia, odchylenie]
+  s_dl: [0.8, 0.12], s_wznios: [0.2, 0.1], s_wys: [0.2, 0.04], s_krzyw: [0.07, 0.03],
+  g_dl: [0.75, 0.12], g_spadek: [0.3, 0.1], g_krzyw: [0.06, 0.03], g_odstep: [0.15, 0.1],
+  z_luk: [0.4, 0.07], z_dl: [0.85, 0.12],
+  s_udz: [0.34, 0.05], g_udz: [0.33, 0.05], z_udz: [0.33, 0.05], l_sila: [0.5, 0.3], czw: [0.2, 0.04],
+  st_wenus: [0.1, 0.05], st_ksiezyc: [0.1, 0.05], st_mars: [0.1, 0.05], st_palce: [0.1, 0.05],
+  ksztalt: [1.75, 0.2], palce: [0.93, 0.05], wsk: [0.97, 0.04], maly: [0.79, 0.04], kciuk: [0.64, 0.05]
+};
+const KLUCZ_SKALI = 'dlon.skala.v1', WAGA = 3;
+const pamiec = () => { try { return typeof localStorage !== 'undefined' ? localStorage : null; } catch (e) { return null; } };
+function wczytajSkale() { try { const p = pamiec(); return (p && JSON.parse(p.getItem(KLUCZ_SKALI))) || {}; } catch (e) { return {}; } }
+function dopiszDoSkali(m) {
+  const p = pamiec(); if (!p) return; const sk = wczytajSkale();
+  Object.keys(PRZED).forEach(k => { if (m[k] == null || !isFinite(m[k])) return; const st = sk[k] || (sk[k] = { n: 0, s: 0, q: 0 }); st.n++; st.s += m[k]; st.q += m[k] * m[k]; if (st.n > 80) { st.n /= 2; st.s /= 2; st.q /= 2; } });
+  try { p.setItem(KLUCZ_SKALI, JSON.stringify(sk)); } catch (e) { /* brak miejsca – trudno */ }
+}
+function odchylenia(m, sk) {
+  const z = {};
+  Object.keys(PRZED).forEach(k => { if (m[k] == null || !isFinite(m[k])) return; const [pm, ps] = PRZED[k], st = sk[k] || { n: 0, s: 0, q: 0 }, n = WAGA + st.n;
+    const sr = (WAGA * pm + st.s) / n, war = (WAGA * (ps * ps + pm * pm) + st.q) / n - sr * sr, sd = Math.max(Math.sqrt(Math.max(war, 0)), ps * 0.4);
+    z[k] = Math.max(-2.5, Math.min(2.5, (m[k] - sr) / sd)); });
+  return z;
+}
+const poziom = z => z == null ? 1 : z < -0.45 ? 0 : z > 0.45 ? 2 : 1;
 
-/* Cechy linii z pomiarów w układzie wzorcowym. */
-export function cechyLinii(L) {
-  const c = {};
-  const s = L.serce; c.serce = { jest: s.jest };
-  if (s.jest) { const a = s.pkt[s.i0], b = s.pkt[s.i1];
-    c.serce.koniec = b[0] >= 214 ? 'wskazujacy' : b[0] >= 182 ? 'miedzy' : 'srodkowy';
-    c.serce.luk = (a[1] - b[1]) > 16 ? 'wygieta' : 'prosta'; }
-  const g = L.glowa; c.glowa = { jest: g.jest };
-  if (g.jest) { const a = g.pkt[g.i0], b = g.pkt[g.i1], dx = Math.max(1, a[0] - b[0]);
-    c.glowa.dlugosc = b[0] <= 128 ? 'dluga' : b[0] <= 166 ? 'srednia' : 'krotka';
-    const sp = (b[1] - a[1]) / dx; c.glowa.spadek = sp > 0.36 ? 'opadajaca' : sp < 0.17 ? 'prosta' : 'lagodna';
-    let odl = 99; if (L.zycie.jest) { const z = L.zycie; for (let i = z.i0; i <= Math.min(z.i1, z.i0 + 40); i++) odl = Math.min(odl, Math.hypot(z.pkt[i][0] - a[0], z.pkt[i][1] - a[1])); }
-    c.glowa.poczatek = (odl < 14 && g.i0 < 30) ? 'zlaczona' : 'osobna'; }
-  const z = L.zycie; c.zycie = { jest: z.jest };
-  if (z.jest) { let minX = 999; for (let i = z.i0; i <= z.i1; i++) minX = Math.min(minX, z.pkt[i][0]);
-    c.zycie.luk = minX <= 186 ? 'szeroki' : minX >= 202 ? 'waski' : 'sredni';
-    c.zycie.dlugosc = z.dl >= 0.72 ? 'dluga' : z.dl >= 0.45 ? 'srednia' : 'krotka'; }
-  const l = L.los; c.los = { jest: l.jest, sila: !l.jest || l.dl < 0.3 ? 'brak' : (l.dl >= 0.6 && l.moc > 0.95) ? 'mocna' : 'delikatna' };
-  ['serce', 'glowa', 'zycie', 'los'].forEach(k => { const x = L[k]; c[k].glebia = !x.jest ? 'niewidoczna' : x.moc >= 1.25 ? 'gleboka' : x.moc >= 0.9 ? 'wyrazna' : 'delikatna'; c[k].przerwy = x.przerwy || 0; c[k].dl = x.dl; c[k].moc = x.moc; });
-  let naj = 'serce'; ['glowa', 'zycie'].forEach(k => { if ((L[k].jest ? L[k].moc * (0.6 + L[k].dl) : 0) > (L[naj].jest ? L[naj].moc * (0.6 + L[naj].dl) : 0)) naj = k; });
-  c.dominanta = naj;
-  const widoczne = ['serce', 'glowa', 'zycie'].filter(k => L[k].jest);
-  c.czytelnosc = Math.min(1, widoczne.reduce((a, k) => a + Math.min(1, L[k].dl / 0.6) * Math.min(1, L[k].moc / 1.1), 0) / 3);
-  return c;
+function krzywizna(p) {
+  const a = p[0], b = p[p.length - 1], dx = b[0] - a[0], dy = b[1] - a[1], c = Math.hypot(dx, dy) || 1; let naj = 0;
+  p.forEach(q => { naj = Math.max(naj, Math.abs(dy * (q[0] - a[0]) - dx * (q[1] - a[1])) / c); });
+  return naj / c;
 }
-
-const GLEBIA = { gleboka: 'głęboka', wyrazna: 'wyraźna', delikatna: 'delikatna', niewidoczna: 'niewidoczna' };
-const przerwyTxt = n => n === 0 ? 'ciągła' : n === 1 ? '1 przerwa' : n + ' przerwy';
-
-function opisSerca(c) {
-  if (!c.jest) return { skrot: 'słabo widoczna', pomiary: [], tekst: 'Kamera nie uchwyciła wyraźnej linii serca. W tradycji delikatna linia serca oznacza osobę, która uczucia chroni i pokazuje je tylko wybranym. Spróbuj w mocniejszym, bocznym świetle – bruzdy rzucą wtedy cień.', wrozba: 'W uczuciach nadchodzi spokojny czas: nic nie musi się dziać szybko. To, co ma zostać, zostanie.' };
-  const kon = { wskazujacy: ['kończy się pod palcem wskazującym (wzgórek Jowisza)', 'Linia sięgająca pod palec wskazujący to znak idealisty: w miłości i przyjaźni stawiasz wysoko poprzeczkę i dajesz z siebie dużo. Lojalność jest dla Ciebie ważniejsza niż fajerwerki.'],
-    miedzy: ['kończy się między palcem wskazującym a środkowym', 'Linia kończąca się między palcami wskazującym i środkowym uchodzi za najbardziej zrównoważoną: łączysz ciepło z rozsądkiem. Umiesz kochać i nie tracić przy tym siebie.'],
-    srodkowy: ['kończy się pod palcem środkowym (wzgórek Saturna)', 'Linia kończąca się pod palcem środkowym mówi o niezależności w uczuciach. Potrzebujesz własnej przestrzeni, a bliskość budujesz czynami, nie deklaracjami.'] }[c.koniec];
-  const luk = c.luk === 'wygieta' ? ['wygięta ku palcom', 'Jej wyraźny łuk oznacza otwartą ekspresję: łatwo mówisz o tym, co czujesz, i lubisz, gdy ktoś odpowiada tym samym.'] : ['prosta', 'Jej prosty przebieg oznacza powściągliwość: uczucia przeżywasz głęboko, ale okazujesz je po swojemu i we własnym tempie.'];
-  const prz = c.przerwy ? ' Przerwy na linii tradycja czyta jako rozdziały: relacje, które coś zamknęły i zrobiły miejsce na nowe.' : '';
-  const wr = c.koniec === 'wskazujacy' ? 'Ktoś doceni Twoją wierność bardziej, niż się spodziewasz. W najbliższym czasie padnie zdanie, na które czekasz – nie przerywaj, gdy ktoś będzie próbował je powiedzieć.'
-    : c.koniec === 'miedzy' ? 'Relacje wchodzą w ciepły, spokojny okres. Jedna rozmowa przy stole wyjaśni więcej niż miesiące domysłów; osoby wolne mają szansę na znajomość, która zacznie się od śmiechu.'
-    : 'Ktoś będzie chciał być bliżej, niż dotąd na to pozwalasz. Dłoń mówi: nie stracisz wolności, jeśli uchylisz drzwi – zyskasz sojusznika.';
-  return { skrot: kon[0], pomiary: [['Zakończenie', kon[0]], ['Przebieg', luk[0]], ['Głębokość', GLEBIA[c.glebia]], ['Ciągłość', przerwyTxt(c.przerwy)], ['Widoczna długość', proc(c.dl)]], tekst: kon[1] + ' ' + luk[1] + prz, wrozba: wr + (c.luk === 'wygieta' ? ' Powiedz głośno, czego chcesz – tym razem ktoś naprawdę Cię usłyszy.' : ' Mały gest zrobi więcej niż wielkie słowa.') };
-}
-function opisGlowy(c) {
-  if (!c.jest) return { skrot: 'słabo widoczna', pomiary: [], tekst: 'Kamera nie uchwyciła wyraźnej linii głowy. Tradycja mówi, że delikatna linia głowy należy do osób, które myślą obrazami i przeczuciami, a nie punktami na liście.', wrozba: 'W sprawach zawodowych nie spiesz się z decyzją: odpowiedź przyjdzie sama, gdy przestaniesz jej szukać.' };
-  const dl = { dluga: ['długa – sięga pod palec serdeczny i dalej', 'Długa linia głowy to umysł analityczny: lubisz rozumieć sprawy do końca i rzadko zadowalasz się pierwszą odpowiedzią.'], srednia: ['średnia', 'Linia głowy średniej długości oznacza umysł praktyczny: bierzesz tyle teorii, ile potrzeba, żeby działać.'], krotka: ['krótka', 'Krótka linia głowy nie mówi nic o inteligencji – oznacza szybkie, konkretne decyzje i niechęć do dzielenia włosa na czworo.'] }[c.dlugosc];
-  const sp = { opadajaca: ['opada ku wzgórkowi Księżyca', 'Opada wyraźnie w stronę nadgarstka: to znak wyobraźni i twórczego myślenia. Pomysły przychodzą do Ciebie obrazami.'], lagodna: ['łagodnie opadająca', 'Łagodny spadek łączy logikę z wyobraźnią: potrafisz i policzyć, i wymyślić.'], prosta: ['prosta, pozioma', 'Biegnie prosto przez dłoń: stąpasz twardo po ziemi, cenisz fakty i porządek.'] }[c.spadek];
-  const po = c.poczatek === 'zlaczona' ? ['złączona z linią życia', 'Zaczyna się razem z linią życia – ostrożność i przywiązanie do bliskich; decyzje dojrzewają u Ciebie powoli, ale są trwałe.'] : ['oddzielona od linii życia', 'Zaczyna się osobno od linii życia – wczesna samodzielność i odwaga chodzenia własną drogą.'];
-  const wr = (c.spadek === 'opadajaca' ? 'Pomysł, który teraz wydaje się zabawą, może zamienić się w coś, za co ludzie zechcą zapłacić. ' : c.spadek === 'prosta' ? 'Nadchodzi czas porządkowania: umowa, rachunek albo plan, który wreszcie się domknie. ' : 'Połączenie dwóch pozornie odległych spraw da Ci przewagę. ')
-    + (c.dlugosc === 'krotka' ? 'Okazja pojawi się nagle i będzie wymagała szybkiego „tak” – masz do tego dryg.' : c.dlugosc === 'dluga' ? 'Ktoś poprosi Cię o opinię w ważnej sprawie; Twoja dokładność zostanie zauważona i wynagrodzona.' : 'Niewielka zmiana w codziennej pracy przyniesie większy efekt, niż zakładasz.');
-  return { skrot: dl[0].split(' –')[0] + ', ' + sp[0], pomiary: [['Długość', dl[0]], ['Kierunek', sp[0]], ['Początek', po[0]], ['Głębokość', GLEBIA[c.glebia]], ['Ciągłość', przerwyTxt(c.przerwy)]], tekst: dl[1] + ' ' + sp[1] + ' ' + po[1], wrozba: wr };
-}
-function opisZycia(c) {
-  if (!c.jest) return { skrot: 'słabo widoczna', pomiary: [], tekst: 'Kamera nie uchwyciła wyraźnej linii życia. To nic nie znaczy dla zdrowia ani długości życia – linia życia mówi o stylu działania, nie o latach. Spróbuj w lepszym świetle.', wrozba: 'Zadbaj o sen i rytm dnia: energia wróci szybciej, niż myślisz.' };
-  const lk = { szeroki: ['szeroki łuk wokół kciuka', 'Szeroki łuk obejmujący wzgórek Wenus to znak witalności i apetytu na życie: lubisz ludzi, ruch i nowe miejsca.'], sredni: ['umiarkowany łuk', 'Umiarkowany łuk oznacza równowagę między działaniem a regeneracją: wiesz, kiedy przyspieszyć, a kiedy odpuścić.'], waski: ['wąski łuk blisko kciuka', 'Linia biegnąca blisko kciuka oznacza rozważne gospodarowanie siłami: najlepiej działasz we własnym rytmie i w znanym otoczeniu.'] }[c.luk];
-  const dl = { dluga: 'długa i wyraźna na całej długości', srednia: 'średniej długości', krotka: 'widoczna na krótkim odcinku' }[c.dlugosc];
-  const prz = c.przerwy ? ' Przerwa na linii to w tradycji zmiana kierunku: przeprowadzka, nowy zawód, nowy rozdział – nie zagrożenie.' : ' Ciągła linia mówi o stałym, równym napędzie.';
-  const wr = c.luk === 'szeroki' ? 'Przed Tobą wyjazd albo zaproszenie, które wyrwie Cię z rutyny. Zgódź się – wrócisz z czymś więcej niż zdjęciami.'
-    : c.luk === 'waski' ? 'Najbliższy czas sprzyja domowi i sprawom, które od dawna czekają w szufladzie. Porządek wokół Ciebie zamieni się w spokój w głowie.'
-    : 'Energia będzie rosła falami. Wykorzystaj pierwszy dobry tydzień na sprawę wymagającą odwagi – drugi przeznacz na odpoczynek.';
-  return { skrot: lk[0], pomiary: [['Łuk', lk[0]], ['Długość', dl], ['Głębokość', GLEBIA[c.glebia]], ['Ciągłość', przerwyTxt(c.przerwy)]], tekst: lk[1] + ' Linia jest ' + dl + '.' + prz + ' Wbrew obiegowej opinii długość tej linii nie mówi o długości życia, tylko o jego intensywności.', wrozba: wr };
-}
-function opisLosu(c) {
-  if (c.sila === 'brak') return { skrot: 'niewidoczna – los w Twoich rękach', pomiary: [['Obecność', 'brak wyraźnej linii']], tekst: 'Linia losu nie występuje na każdej dłoni i jej brak nie jest złym znakiem. Chiromanci mówią, że to dłoń człowieka, który sam pisze swój scenariusz: zmienia zajęcia, próbuje, nie trzyma się jednej ścieżki z obowiązku.', wrozba: 'Nic nie jest przesądzone – i to dobra wiadomość. Zmiana, o której myślisz, zależy wyłącznie od Twojej decyzji; nikt nie musi wyrazić na nią zgody.' };
-  if (c.sila === 'mocna') return { skrot: 'mocna, biegnie ku palcowi środkowemu', pomiary: [['Obecność', 'wyraźna'], ['Głębokość', GLEBIA[c.glebia]], ['Widoczna długość', proc(c.dl)], ['Ciągłość', przerwyTxt(c.przerwy)]], tekst: 'Wyraźna linia losu, biegnąca środkiem dłoni ku palcowi środkowemu, oznacza silne poczucie kierunku. Wiesz, po co wstajesz rano, a obowiązki traktujesz poważnie. Ludzie z taką linią często wcześnie znajdują swoje zajęcie.' + (c.przerwy ? ' Przerwy to świadome zmiany kursu.' : ''), wrozba: 'Wysiłek z ostatnich miesięcy zaczyna procentować. Pojawi się propozycja większej odpowiedzialności – przyjmij ją na własnych warunkach.' };
-  return { skrot: 'delikatna, zarysowana fragmentami', pomiary: [['Obecność', 'delikatna'], ['Głębokość', GLEBIA[c.glebia]], ['Widoczna długość', proc(c.dl)]], tekst: 'Delikatna linia losu pokazuje drogę, która dopiero się krystalizuje. Masz kilka talentów i jeszcze nie stawiasz wszystkiego na jeden. Tradycja mówi, że taka linia pogłębia się, gdy człowiek znajduje pracę, którą lubi.', wrozba: 'W najbliższych miesiącach jedna z pobocznych spraw zacznie rosnąć szybciej niż główna. Obserwuj, co przychodzi Ci łatwo – tam jest kierunek.' };
+export function miary(w, g) {
+  const L = w.linie, m = {}, odc = l => l.pkt.slice(l.i0, l.i1 + 1);
+  if (L.serce.jest) { const p = odc(L.serce), a = p[0], b = p[p.length - 1], dx = Math.max(8, Math.abs(b[0] - a[0]));
+    m.s_dl = L.serce.dl; m.s_wznios = (a[1] - b[1]) / dx; m.s_wys = (p.reduce((s, q) => s + q[1], 0) / p.length - 208) / 186; m.s_krzyw = krzywizna(p); }
+  if (L.glowa.jest) { const p = odc(L.glowa), a = p[0], b = p[p.length - 1], dx = Math.max(8, Math.abs(b[0] - a[0]));
+    m.g_dl = L.glowa.dl; m.g_spadek = (b[1] - a[1]) / dx; m.g_krzyw = krzywizna(p);
+    if (L.zycie.jest) { let odl = 1e9; odc(L.zycie).slice(0, 50).forEach(q => { odl = Math.min(odl, Math.hypot(q[0] - a[0], q[1] - a[1])); }); m.g_odstep = (odl + L.glowa.i0) / 138; } }
+  if (L.zycie.jest) { let minX = 999; odc(L.zycie).forEach(q => { minX = Math.min(minX, q[0]); }); m.z_luk = (246 - minX) / 138; m.z_dl = L.zycie.dl; }
+  const sila = k => L[k].jest ? L[k].moc * (0.5 + L[k].dl) : 0, suma = sila('serce') + sila('glowa') + sila('zycie');
+  if (suma > 0) { m.s_udz = sila('serce') / suma; m.g_udz = sila('glowa') / suma; m.z_udz = sila('zycie') / suma; }
+  const glowne = ['serce', 'glowa', 'zycie'].filter(k => L[k].jest), srMoc = glowne.length ? glowne.reduce((a, k) => a + L[k].moc, 0) / glowne.length : 1;
+  m.l_sila = L.los.jest ? L.los.dl * L.los.moc / srMoc : 0;
+  if (L.serce.jest && L.glowa.jest) { const ys = {}; odc(L.serce).forEach(q => { ys[q[0]] = q[1]; }); let s = 0, n = 0; odc(L.glowa).forEach(q => { if (ys[q[0]] != null) { s += q[1] - ys[q[0]]; n++; } }); if (n > 10) m.czw = s / n / 186; }
+  if (w.strefy) Object.keys(w.strefy).forEach(k => { m['st_' + k] = w.strefy[k]; });
+  m.ksztalt = g.ksztalt; m.palce = g.palceDoDloni; m.wsk = g.wskDoSerd; m.maly = g.malyDoSerd; m.kciuk = g.kciukDoDloni;
+  return m;
 }
 
+/* Opisy: [poniżej typowego, typowo, powyżej typowego]. */
+const OPIS = {
+  s_dl: ['Jest krótsza niż u większości dłoni – w uczuciach liczy się dla Ciebie konkret i mały, sprawdzony krąg ludzi.', 'Ma typową długość – w relacjach dajesz i bierzesz po równo.', 'Jest wyjątkowo długa – stawiasz bliskim wysoko poprzeczkę i dajesz z siebie bardzo dużo; lojalność jest dla Ciebie świętością.'],
+  s_wznios: ['Biegnie niemal poziomo – uczucia trzymasz pod kontrolą i okazujesz je czynami, nie słowami.', 'Wznosi się łagodnie ku palcom – łączysz ciepło z rozsądkiem i umiesz kochać, nie tracąc siebie.', 'Wyraźnie wspina się ku palcom – serce masz na dłoni: mówisz, co czujesz, i tego samego oczekujesz od innych.'],
+  s_wys: ['Leży wysoko, tuż pod palcami – emocje szybko wychodzą na wierzch, reagujesz żywo i od razu.', '', 'Leży nisko, bliżej środka dłoni – zanim zaufasz, długo obserwujesz; za to przywiązujesz się na lata.'],
+  s_krzyw: ['Jej rysunek jest prosty jak od linijki – w relacjach cenisz jasne zasady.', '', 'Ma mocny łuk – w miłości potrzebujesz ruchu, gestów i odrobiny teatru.'],
+  g_dl: ['Jest krótka – decydujesz szybko, na podstawie tego, co istotne, i nie lubisz dzielić włosa na czworo. O inteligencji to nic nie mówi.', 'Ma średnią długość – bierzesz tyle teorii, ile potrzeba do działania.', 'Jest długa, sięga daleko w stronę krawędzi dłoni – lubisz rozumieć sprawy do końca i rzadko zadowalasz się pierwszą odpowiedzią.'],
+  g_spadek: ['Biegnie prosto w poprzek dłoni – stąpasz twardo po ziemi, cenisz fakty i porządek.', 'Opada łagodnie – łączysz logikę z wyobraźnią: potrafisz i policzyć, i wymyślić.', 'Mocno opada ku nadgarstkowi, w stronę wzgórka Księżyca – myślisz obrazami i masz wyobraźnię twórcy.'],
+  g_odstep: ['Zaczyna się razem z linią życia – ostrożność i przywiązanie do bliskich; decyzje dojrzewają u Ciebie powoli, ale są trwałe.', 'Zaczyna się tuż przy linii życia – rozwaga idzie u Ciebie w parze z samodzielnością.', 'Zaczyna się wyraźnie osobno od linii życia – wcześnie chodzisz własną drogą i nie pytasz o pozwolenie.'],
+  g_krzyw: ['Jest prosta – myśl prowadzisz po linii, punkt po punkcie.', '', 'Faluje – Twoje zainteresowania przychodzą falami i każda coś po sobie zostawia.'],
+  z_luk: ['Trzyma się blisko kciuka – gospodarujesz siłami rozważnie i najlepiej działasz we własnym rytmie, w znanym otoczeniu.', 'Zatacza umiarkowany łuk – wiesz, kiedy przyspieszyć, a kiedy odpuścić.', 'Zatacza szeroki łuk w głąb dłoni – witalność i apetyt na życie: ludzie, ruch, nowe miejsca.'],
+  z_dl: ['Widać ją na krótszym odcinku niż zwykle – energię wydajesz zrywami, a po zrywie potrzebujesz ciszy.', '', 'Jest wyraźna aż do nadgarstka – masz równy, długodystansowy napęd.'],
+  czw: ['Linie serca i głowy biegną blisko siebie (wąski czworobok) – skupiasz się na swoim i nie rozdajesz zaufania na prawo i lewo.', 'Odstęp między linią serca a linią głowy jest typowy – otwartość i ostrożność masz w równowadze.', 'Linie serca i głowy są szeroko rozstawione (szeroki czworobok) – otwarta głowa, tolerancja i hojność w ocenianiu innych.'],
+  ksztalt: ['Dłoń szeroka i mocna – ręka człowieka czynu.', '', 'Dłoń smukła i wydłużona – ręka obserwatora i wrażliwca.'],
+  palce: ['Krótkie palce – widzisz całość, szczegóły zostawiasz innym i działasz szybko.', 'Palce typowej długości – równowaga między ogółem a szczegółem.', 'Długie palce – cierpliwość do szczegółu i dokładność.'],
+  wsk: ['Palec serdeczny wyraźnie dłuższy od wskazującego – przewaga Apolla: zamiłowanie do ryzyka, sceny i rzeczy pięknych.', 'Palce wskazujący i serdeczny w typowej proporcji – pewność siebie bez potrzeby dominowania.', 'Palec wskazujący wyjątkowo długi względem serdecznego – przewaga Jowisza: ambicja, potrzeba wpływu, naturalne przywództwo.'],
+  maly: ['Krótszy mały palec – Merkury w cieniu: wolisz czyn od przemówień i szczerość od dyplomacji.', 'Mały palec typowej długości – mówisz tyle, ile trzeba.', 'Długi mały palec – mocny Merkury: dar słowa, handlu i szybkiej riposty.'],
+  kciuk: ['Krótszy kciuk – łagodność: wolisz przekonać niż przeforsować.', 'Kciuk typowej długości – wola i takt w równowadze.', 'Długi kciuk – silna wola: gdy coś postanowisz, trudno Cię zawrócić.']
+};
+/* Nazwy znaków szczególnych: [poniżej, powyżej]. */
+const ZNAK = {
+  s_dl: ['krótka linia serca', 'wyjątkowo długa linia serca'], s_wznios: ['pozioma linia serca', 'linia serca wspinająca się ku palcom'], s_wys: ['wysoko położona linia serca', 'nisko położona linia serca'], s_krzyw: ['prosta jak struna linia serca', 'mocno wygięta linia serca'],
+  g_dl: ['krótka linia głowy', 'długa linia głowy'], g_spadek: ['pozioma linia głowy', 'linia głowy opadająca ku Księżycowi'], g_odstep: ['linia głowy złączona z linią życia', 'linia głowy oddzielona od linii życia'], g_krzyw: ['prosta linia głowy', 'falująca linia głowy'],
+  z_luk: ['linia życia blisko kciuka', 'szeroki łuk linii życia'], z_dl: ['krótko zarysowana linia życia', 'linia życia wyraźna do nadgarstka'], czw: ['wąski czworobok', 'szeroki czworobok'],
+  ksztalt: ['szeroka, mocna dłoń', 'smukła, wydłużona dłoń'], palce: ['krótkie palce', 'długie palce'], wsk: ['dominujący palec serdeczny', 'dominujący palec wskazujący'], maly: ['krótki mały palec', 'długi mały palec'], kciuk: ['krótki kciuk', 'długi kciuk']
+};
+/* Zapowiedzi: [gdy cecha poniżej typowej, gdy powyżej]. */
+const ZAPOWIEDZ = {
+  s_dl: ['W uczuciach postaw na jedną, konkretną rozmowę zamiast wielu półsłówek – przyniesie ulgę obu stronom.', 'Ktoś doceni Twoją wierność bardziej, niż się spodziewasz. Padnie zdanie, na które czekasz – nie przerywaj, gdy ktoś będzie próbował je powiedzieć.'],
+  s_wznios: ['Ktoś będzie chciał być bliżej, niż dotąd na to pozwalasz. Uchyl drzwi – nie stracisz wolności, zyskasz sojusznika.', 'Powiedz głośno, czego chcesz. Tym razem ktoś naprawdę Cię usłyszy.'],
+  s_wys: ['Silna emocja z najbliższych dni okaże się dobrym doradcą – ale decyzję podejmij dzień później.', 'Znajomość, którą długo trzymasz na dystans, jest warta drugiego spojrzenia.'],
+  s_krzyw: ['W relacjach nadchodzi czas jasnych ustaleń: co zostanie powiedziane wprost, to się utrzyma.', 'Czeka Cię niespodzianka od kogoś bliskiego – przyjmij ją bez pytania „po co”.'],
+  g_dl: ['Okazja pojawi się nagle i będzie wymagała szybkiego „tak” – masz do tego dryg.', 'Ktoś poprosi Cię o opinię w ważnej sprawie; Twoja dokładność zostanie zauważona i wynagrodzona.'],
+  g_spadek: ['Nadchodzi czas porządkowania: umowa, rachunek albo plan, który wreszcie się domknie.', 'Pomysł, który teraz wydaje się zabawą, może zamienić się w coś, za co ludzie zechcą zapłacić.'],
+  g_odstep: ['Rada kogoś z rodziny okaże się w sprawach zawodowych cenniejsza niż opinia fachowca.', 'Samodzielna decyzja, której nikt Ci nie doradzał, okaże się jedną z najlepszych w tym roku.'],
+  g_krzyw: ['Trzymaj się planu – prosta droga jest teraz najkrótsza.', 'Dwie pozornie odległe sprawy połączą się i dadzą Ci przewagę.'],
+  z_luk: ['Najbliższy czas sprzyja domowi i sprawom, które od dawna czekają w szufladzie. Porządek wokół Ciebie zamieni się w spokój w głowie.', 'Przed Tobą wyjazd albo zaproszenie, które wyrwie Cię z rutyny. Zgódź się – wrócisz z czymś więcej niż zdjęciami.'],
+  z_dl: ['Energia będzie przychodzić falami. Pierwszy dobry tydzień wykorzystaj na sprawę wymagającą odwagi, drugi przeznacz na odpoczynek.', 'Masz przed sobą długi, równy odcinek – dobry moment na przedsięwzięcie, które wymaga wytrwałości.']
+};
+const NEUTRALNE = {
+  serce: 'Relacje wchodzą w ciepły, spokojny okres. Jedna rozmowa przy stole wyjaśni więcej niż miesiące domysłów.',
+  glowa: 'Niewielka zmiana w codziennej pracy przyniesie większy efekt, niż zakładasz.',
+  zycie: 'Siły masz teraz w równowadze – utrzymaj rytm snu i ruchu, a zapas energii wystarczy na coś nowego.'
+};
+const STREFY = {
+  wenus: ['Wzgórek Wenus – u nasady kciuka', 'Najgęstszy rysunek drobnych linii masz u nasady kciuka. To obszar Wenus: zmysły, czułość, przywiązanie do domu i ludzi.', 'Dobre wieści przyjdą z domu albo od kogoś, z kim łączy Cię długa zażyłość.'],
+  ksiezyc: ['Wzgórek Księżyca – krawędź dłoni naprzeciw kciuka', 'Najgęstszy rysunek drobnych linii masz przy krawędzi dłoni naprzeciw kciuka. To obszar Księżyca: wyobraźnia, sny, podróże i przeczucia.', 'Zwróć uwagę na sen albo przeczucie z najbliższych dni – i na propozycję związaną z drogą.'],
+  mars: ['Równina Marsa – środek dłoni', 'Najgęstszy rysunek drobnych linii masz w środku dłoni. To równina Marsa: odwaga, wytrwałość i gotowość do stawania w swojej obronie.', 'Czeka Cię sytuacja, w której trzeba będzie postawić na swoim. Zrób to spokojnie – wygrasz samą pewnością.'],
+  palce: ['Wzgórki pod palcami', 'Najgęstszy rysunek drobnych linii masz tuż pod palcami. To wzgórki Jowisza, Saturna, Apolla i Merkurego: ambicja, obowiązek, talent i słowo.', 'Ktoś zauważy Twoje umiejętności i powie o nich dalej. Nie umniejszaj swojej roli.']
+};
 const DOMINANTY = {
-  serce: ['Serce prowadzi', 'Najmocniej zapisana jest linia serca – najpierw czujesz, potem liczysz. Twoją siłą są ludzie.'],
-  glowa: ['Rozum prowadzi', 'Najmocniej zapisana jest linia głowy – zanim zrobisz krok, chcesz rozumieć. Twoją siłą jest jasna myśl.'],
-  zycie: ['Energia prowadzi', 'Najmocniej zapisana jest linia życia – działasz, zanim inni skończą się zastanawiać. Twoją siłą jest napęd.']
+  serce: ['Serce prowadzi', 'Na tle innych dłoni najmocniej zapisana jest u Ciebie linia serca – najpierw czujesz, potem liczysz. Twoją siłą są ludzie.', 'W najbliższych tygodniach najwięcej wydarzy się między ludźmi: spotkanie, telefon albo wiadomość od kogoś, o kim dawno nie myślisz.'],
+  glowa: ['Rozum prowadzi', 'Na tle innych dłoni najmocniej zapisana jest u Ciebie linia głowy – zanim zrobisz krok, chcesz rozumieć. Twoją siłą jest jasna myśl.', 'W najbliższych tygodniach kluczowa będzie jedna decyzja. Masz już wszystkie dane – brakuje tylko Twojego „tak”.'],
+  zycie: ['Energia prowadzi', 'Na tle innych dłoni najmocniej zapisana jest u Ciebie linia życia – działasz, zanim inni skończą się zastanawiać. Twoją siłą jest napęd.', 'W najbliższych tygodniach poczujesz przypływ sił. Zacznij to, co odkładasz – pierwszy krok okaże się najtrudniejszy i najkrótszy.']
+};
+const LOS = [
+  { skrot: 'niewidoczna – los w Twoich rękach', tekst: 'Linia losu nie występuje na każdej dłoni i jej brak nie jest złym znakiem. Chiromanci mówią, że to dłoń człowieka, który sam pisze swój scenariusz: zmienia zajęcia, próbuje, nie trzyma się jednej ścieżki z obowiązku.', wrozba: 'Nic nie jest przesądzone – i to dobra wiadomość. Zmiana, o której myślisz, zależy wyłącznie od Twojej decyzji; nikt nie musi wyrazić na nią zgody.' },
+  { skrot: 'delikatna, zarysowana fragmentami', tekst: 'Delikatna linia losu pokazuje drogę, która dopiero się krystalizuje. Masz kilka talentów i jeszcze nie stawiasz wszystkiego na jeden. Tradycja mówi, że taka linia pogłębia się, gdy człowiek znajduje pracę, którą lubi.', wrozba: 'W najbliższych miesiącach jedna z pobocznych spraw zacznie rosnąć szybciej niż główna. Obserwuj, co przychodzi Ci łatwo – tam jest kierunek.' },
+  { skrot: 'mocna, biegnie ku palcowi środkowemu', tekst: 'Wyraźna linia losu, biegnąca środkiem dłoni ku palcowi środkowemu, oznacza silne poczucie kierunku. Wiesz, po co wstajesz rano, a obowiązki traktujesz poważnie. Ludzie z taką linią często wcześnie znajdują swoje zajęcie.', wrozba: 'Wysiłek z ostatnich miesięcy zaczyna procentować. Pojawi się propozycja większej odpowiedzialności – przyjmij ją na własnych warunkach.' }
+];
+const przerwyTxt = n => n === 0 ? 'ciągła' : n === 1 ? '1 przerwa' : n + ' przerwy';
+const stopnie = t => Math.round(Math.atan(t) * 180 / Math.PI) + '°';
+const naTle = z => z == null ? '–' : z > 1.2 ? 'dużo powyżej typowej' : z > 0.45 ? 'powyżej typowej' : z < -1.2 ? 'dużo poniżej typowej' : z < -0.45 ? 'poniżej typowej' : 'typowa';
+const BRAK = {
+  serce: 'Kamera nie uchwyciła wyraźnej linii serca. W tradycji delikatna linia serca oznacza osobę, która uczucia chroni i pokazuje je tylko wybranym. Spróbuj w mocniejszym, bocznym świetle – bruzdy rzucą wtedy cień.',
+  glowa: 'Kamera nie uchwyciła wyraźnej linii głowy. Tradycja mówi, że delikatna linia głowy należy do osób, które myślą obrazami i przeczuciami, a nie punktami na liście.',
+  zycie: 'Kamera nie uchwyciła wyraźnej linii życia. To nic nie znaczy dla zdrowia ani długości życia – linia życia mówi o stylu działania, nie o latach. Spróbuj w lepszym świetle.'
 };
 
-function palceOpis(g) {
-  const w = [];
-  if (g.wskDoSerd > 1.03) w.push(['Palec wskazujący dłuższy od serdecznego', 'Przewaga Jowisza: ambicja, potrzeba wpływu, naturalne przywództwo.']);
-  else if (g.wskDoSerd < 0.97) w.push(['Palec serdeczny dłuższy od wskazującego', 'Przewaga Apolla: zamiłowanie do ryzyka, sceny i rzeczy pięknych.']);
-  else w.push(['Palce wskazujący i serdeczny równe', 'Równowaga Jowisza i Apolla: pewność siebie bez potrzeby dominowania.']);
-  w.push(g.malyDoSerd > 0.80 ? ['Długi mały palec', 'Mocny Merkury: dar słowa, handlu i szybkiej riposty.'] : ['Krótszy mały palec', 'Merkury w cieniu: wolisz czyn od przemówień, a szczerość od dyplomacji.']);
-  w.push(g.katKciuka > 48 ? ['Kciuk szeroko odstawiony', 'Niezależność i hojność: trudno Cię do czegoś zmusić.'] : ['Kciuk trzymany blisko dłoni', 'Ostrożność i takt: najpierw patrzysz, potem ufasz.']);
-  w.push(g.rozstaw > 32 ? ['Palce szeroko rozstawione', 'Otwartość na nowe i potrzeba swobody.'] : ['Palce trzymane blisko siebie', 'Skupienie, porządek i rozwaga w wydatkach.']);
-  return w;
+function opisLinii(k, klucze, L, m, z, pomiary) {
+  if (!L[k].jest) return { skrot: 'słabo widoczna', pomiary: [], tekst: BRAK[k], wrozba: NEUTRALNE[k] };
+  const zdania = klucze.map(q => OPIS[q][poziom(z[q])]).filter(Boolean);
+  if (L[k].przerwy) zdania.push(k === 'zycie' ? 'Przerwa na linii to w tradycji zmiana kierunku: przeprowadzka, nowy zawód, nowy rozdział – nie zagrożenie.' : 'Przerwy na linii tradycja czyta jako rozdziały: coś się zamknęło i zrobiło miejsce na nowe.');
+  if (k === 'zycie') zdania.push('Wbrew obiegowej opinii długość tej linii nie mówi o długości życia, tylko o stylu działania.');
+  /* Wróżbę wybiera cecha, którą ta linia najbardziej odstaje od typowej. */
+  let naj = null; klucze.forEach(q => { if (ZAPOWIEDZ[q] && z[q] != null && (!naj || Math.abs(z[q]) > Math.abs(z[naj]))) naj = q; });
+  const wyrazna = naj && Math.abs(z[naj]) >= 0.45;
+  const skroty = klucze.filter(q => ZNAK[q] && poziom(z[q]) !== 1).sort((a, b) => Math.abs(z[b]) - Math.abs(z[a])).slice(0, 2).map(q => ZNAK[q][z[q] > 0 ? 1 : 0]);
+  return { skrot: skroty.length ? skroty.join('; ') : 'typowy przebieg, bez skrajności', pomiary, tekst: zdania.join(' '), wrozba: wyrazna ? ZAPOWIEDZ[naj][z[naj] > 0 ? 1 : 0] : NEUTRALNE[k] };
 }
 
 /* Cały odczyt: struktura wspólna dla ekranu i raportu PDF. */
-export function zbudujOdczyt(wynik, geo, reka, dzis = new Date()) {
-  const c = cechyLinii(wynik.linie);
-  const dluga = geo.ksztalt >= PROG_KSZTALT, palce = geo.palceDoDloni >= PROG_PALCE;
-  const zyw = ZYWIOLY[dluga ? (palce ? 'woda' : 'ogien') : (palce ? 'powietrze' : 'ziemia')];
-  const linie = { serce: opisSerca(c.serce), glowa: opisGlowy(c.glowa), zycie: opisZycia(c.zycie), los: opisLosu(c.los) };
-  const dom = DOMINANTY[c.dominanta];
-  const ziarno = Math.round(geo.ksztalt * 10) + Math.round(geo.wskDoSerd * 20) + Math.round(geo.malyDoSerd * 20);
-  const mies = MIESIACE[(dzis.getMonth() + 1 + ziarno % 4) % 12];
+export function zbudujOdczyt(wynik, geo, reka, opcje = {}) {
+  const dzis = opcje.dzis || new Date(), L = wynik.linie;
+  const m = miary(wynik, geo), z = odchylenia(m, wczytajSkale());
+  if (opcje.ucz !== false) dopiszDoSkali(m);
+
+  const zyw = ZYWIOLY[(z.ksztalt || 0) >= 0 ? ((z.palce || 0) >= 0 ? 'woda' : 'ogien') : ((z.palce || 0) >= 0 ? 'powietrze' : 'ziemia')];
+  const udz = k => (z[k] == null ? -9 : z[k]), dk = [['serce', udz('s_udz')], ['glowa', udz('g_udz')], ['zycie', udz('z_udz')]].sort((a, b) => b[1] - a[1])[0][0], dom = DOMINANTY[dk];
+  const sk = Object.keys(STREFY).filter(k => z['st_' + k] != null).sort((a, b) => z['st_' + b] - z['st_' + a])[0] || 'mars', strefa = STREFY[sk];
+
+  const linie = {
+    serce: opisLinii('serce', ['s_dl', 's_wznios', 's_wys', 's_krzyw'], L, m, z, L.serce.jest ? [['Widoczna długość', Math.round(m.s_dl * 100) + '% (' + naTle(z.s_dl) + ')'], ['Wznios ku palcom', stopnie(m.s_wznios) + ' (' + naTle(z.s_wznios) + ')'], ['Położenie', ['wysoko, pod palcami', 'typowe', 'nisko, bliżej środka'][poziom(z.s_wys)]], ['Wygięcie łuku', Math.round(m.s_krzyw * 100) + '% długości'], ['Siła na tle pozostałych linii', Math.round((m.s_udz || 0) * 100) + '%'], ['Ciągłość', przerwyTxt(L.serce.przerwy)]] : []),
+    glowa: opisLinii('glowa', ['g_dl', 'g_spadek', 'g_odstep', 'g_krzyw'], L, m, z, L.glowa.jest ? [['Widoczna długość', Math.round(m.g_dl * 100) + '% (' + naTle(z.g_dl) + ')'], ['Spadek ku nadgarstkowi', stopnie(m.g_spadek) + ' (' + naTle(z.g_spadek) + ')'], ['Początek względem linii życia', m.g_odstep == null ? '–' : ['złączona', 'tuż obok', 'osobno'][poziom(z.g_odstep)]], ['Falowanie', Math.round(m.g_krzyw * 100) + '% długości'], ['Siła na tle pozostałych linii', Math.round((m.g_udz || 0) * 100) + '%'], ['Ciągłość', przerwyTxt(L.glowa.przerwy)]] : []),
+    zycie: opisLinii('zycie', ['z_luk', 'z_dl'], L, m, z, L.zycie.jest ? [['Szerokość łuku', Math.round(m.z_luk * 100) + '% szerokości dłoni (' + naTle(z.z_luk) + ')'], ['Widoczna długość', Math.round(m.z_dl * 100) + '% (' + naTle(z.z_dl) + ')'], ['Siła na tle pozostałych linii', Math.round((m.z_udz || 0) * 100) + '%'], ['Ciągłość', przerwyTxt(L.zycie.przerwy)]] : [])
+  };
+  const pl = !L.los.jest ? 0 : poziom(z.l_sila) === 2 ? 2 : (m.l_sila < 0.12 ? 0 : 1), los = LOS[pl];
+  linie.los = { skrot: los.skrot, tekst: los.tekst, wrozba: los.wrozba, pomiary: pl === 0 ? [['Obecność', 'brak wyraźnej linii']] : [['Obecność', pl === 2 ? 'wyraźna' : 'delikatna'], ['Widoczna długość', Math.round(L.los.dl * 100) + '%'], ['Siła względem linii głównych', Math.round(m.l_sila * 100) + '%'], ['Ciągłość', przerwyTxt(L.los.przerwy)]] };
+
+  /* Znaki szczególne: cechy, którymi ta dłoń najbardziej odstaje od typowej. */
+  const znaki = Object.keys(ZNAK).filter(k => z[k] != null && Math.abs(z[k]) >= 0.45).sort((a, b) => Math.abs(z[b]) - Math.abs(z[a])).slice(0, 3)
+    .map(k => [ZNAK[k][z[k] > 0 ? 1 : 0], OPIS[k][z[k] > 0 ? 2 : 0]]);
+
+  const c = { dominanta: dk };
+  ['serce', 'glowa', 'zycie', 'los'].forEach(k => { c[k] = { jest: L[k].jest, moc: L[k].moc, dl: L[k].dl, przerwy: L[k].przerwy || 0 }; });
+  c.czytelnosc = Math.min(1, ['serce', 'glowa', 'zycie'].filter(k => L[k].jest).reduce((a, k) => a + Math.min(1, L[k].dl / 0.6) * Math.min(1, L[k].moc / 1.1), 0) / 3);
+
   const przerwy = c.serce.przerwy + c.glowa.przerwy + c.zycie.przerwy;
-  const tygodnie = (przerwy >= 2 ? 'Dłoń pokazuje czas przejścia: coś się domyka, żeby mogło zacząć się nowe. ' : 'Dłoń pokazuje spokojny, równy nurt – dobry moment, żeby budować, a nie gasić pożary. ')
-    + { serce: 'W najbliższych tygodniach najwięcej wydarzy się między ludźmi: spotkanie, telefon albo wiadomość od kogoś, o kim dawno nie myślisz.', glowa: 'W najbliższych tygodniach kluczowa będzie jedna decyzja. Masz już wszystkie dane – brakuje tylko Twojego „tak”.', zycie: 'W najbliższych tygodniach poczujesz przypływ sił. Zacznij to, co odkładasz – pierwszy krok okaże się najtrudniejszy i najkrótszy.' }[c.dominanta];
+  const tygodnie = (znaki.length ? 'Najmocniejszy znak tej dłoni to ' + znaki[0][0] + '. ' : '')
+    + (przerwy >= 2 ? 'Rysunek linii pokazuje czas przejścia: coś się domyka, żeby mogło zacząć się nowe. ' : '') + dom[2] + ' ' + strefa[2];
+  /* Ziarno „szczęśliwych” znaków liczymy z samych pomiarów (zgrubnie zaokrąglonych), żeby ta sama dłoń dostawała to samo. */
+  const q = (x, krok) => x == null ? 0 : Math.round(x / krok);
+  const ziarno = Math.abs(q(geo.ksztalt, 0.3) + 3 * q(m.s_wznios, 0.2) + 5 * q(m.g_spadek, 0.2) + 7 * q(m.z_luk, 0.12) + 11 * q(m.czw, 0.07));
   const reka2 = reka === 'prawa' ? 'To prawa dłoń. U osób praworęcznych tradycja nazywa ją dłonią czynną: pokazuje, co robisz ze swoim życiem (lewa – z czym przychodzisz na świat).'
     : reka === 'lewa' ? 'To lewa dłoń. U osób praworęcznych tradycja nazywa ją dłonią bierną: pokazuje wrodzone skłonności i potencjał (prawa – to, co z nim robisz).' : '';
   return {
-    cechy: c, zywiol: zyw, dominanta: dom, linie, palce: palceOpis(geo), reka: reka2,
+    cechy: c, miary: m, odchylenia: z, zywiol: zyw, dominanta: dom, linie, znaki, reka: reka2,
+    czworobok: m.czw == null ? null : [Math.round(m.czw * 100) + '% długości dłoni', OPIS.czw[poziom(z.czw)]],
+    strefa: [strefa[0], strefa[1]],
+    palce: ['wsk', 'maly', 'kciuk', 'palce'].map(k => OPIS[k][poziom(z[k])]).filter(Boolean),
     tytul: 'Dłoń ' + { Ziemia: 'Ziemi', Powietrze: 'Powietrza', Ogień: 'Ognia', Woda: 'Wody' }[zyw.n] + ' · ' + zyw.haslo,
     przepowiednia: [
       ['Najbliższe tygodnie', tygodnie],
       ['Miłość i relacje', linie.serce.wrozba],
-      ['Praca i pieniądze', linie.glowa.wrozba + ' ' + (c.los.sila === 'mocna' ? 'Linia losu wzmacnia tę zapowiedź.' : '')],
+      ['Praca i pieniądze', linie.glowa.wrozba + (pl === 2 ? ' Mocna linia losu wzmacnia tę zapowiedź.' : '')],
       ['Energia i droga', linie.zycie.wrozba],
       ['Los', linie.los.wrozba]
     ],
     rada: zyw.rada,
-    szczescie: [['Mocny miesiąc', mies], ['Dzień', zyw.dzien], ['Liczba', String(1 + ziarno % 9)], ['Kolor', zyw.kolor], ['Patron dłoni', zyw.planeta]]
+    szczescie: [['Mocny miesiąc', MIESIACE[(dzis.getMonth() + 1 + ziarno % 5) % 12]], ['Dzień', ['poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota', 'niedziela'][ziarno % 7]], ['Liczba', String(1 + ziarno % 9)], ['Kolor', zyw.kolor], ['Patron dłoni', zyw.planeta]]
   };
 }
 
 export const METODY = [
   ['Jak czytamy dłoń', 'Model wykrywania dłoni (MediaPipe Hand Landmarker, licencja Apache 2.0) wyznacza 21 punktów szkieletu. Zanim zaczniemy czytać, sprawdzamy, czy kamera widzi wnętrze dłoni, a nie grzbiet: model rozpoznaje lewą i prawą rękę, a układ punktów mówi, którą stroną jest zwrócona. Na ich podstawie prostujemy obraz dłoni do układu wzorcowego i uśredniamy kilkadziesiąt klatek. Bruzdy to miejsca ciemniejsze od otoczenia; cztery linie główne śledzimy algorytmem najsilniejszej ścieżki w obszarach, w których występują anatomicznie.'],
   ['Tożsamość i biometria', 'W kryminalistyce i biometrii porównuje się odbitki dłoni (palmprint): przebieg bruzd zgięciowych, drobne linie i listewki skórne w rozdzielczości 500 dpi i większej. Tu liczymy uproszczony kod orientacji bruzd w 224 polach dłoni. To pokaz zasady działania – kamera laptopa lub telefonu nie widzi listewek skórnych, więc wynik nie nadaje się do identyfikacji osób.'],
+  ['Odczyt indywidualny', 'Każdą dłoń opisujemy ponad dwudziestoma liczbami: długością, nachyleniem i wygięciem linii, odstępami między nimi, gęstością drobnych linii w czterech obszarach dłoni i proporcjami palców. Oceniamy je nie według sztywnych progów, lecz na tle dłoni zeskanowanych wcześniej na tym urządzeniu – odczyt mówi więc, czym ta dłoń różni się od innych. Skala to same średnie (bez obrazów i bez danych osób) i jest zapisana tylko w tej przeglądarce; pierwsze kilka odczytów opiera się na wartościach wyjściowych.'],
   ['Symbolika', 'Znaczenia linii i kształtów dłoni pochodzą z tradycji chiromancji zachodniej (Cheiro, William Benham, Casimir d\'Arpentigny). Chiromancja nie ma potwierdzenia naukowego. Przepowiednie są zabawą i pretekstem do rozmowy, nie poradą życiową, zdrowotną ani finansową.'],
   ['Prywatność', 'Obraz z kamery jest analizowany wyłącznie w przeglądarce. Nic nie jest wysyłane na serwer. Zapamiętane dłonie trzymane są tylko w pamięci tej przeglądarki i można je w każdej chwili usunąć.']
 ];
