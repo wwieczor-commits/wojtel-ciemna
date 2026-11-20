@@ -1,4 +1,4 @@
-/* © 2026 Wojciech Wieczorek. Wszelkie prawa zastrzeżone. */
+/* © 2026 Wojciech Wieczorek i Anna Mikos. Wszelkie prawa zastrzeżone. */
 /* Analiza obrazu dłoni: prostowanie do układu wzorcowego, mapa bruzd, śledzenie linii głównych, kod orientacji. */
 
 export const CW = 400, CH = 440;
