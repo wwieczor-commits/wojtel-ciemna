@@ -49,7 +49,7 @@ a{color:inherit}
 /* ---------- nagłówek ---------- */
 .hdr{position:sticky;top:0;z-index:50;background:rgba(244,246,249,.92);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-bottom:2px dashed #C9D1DD}
 .hdr__in{display:flex;align-items:center;justify-content:space-between;height:74px;gap:20px}
-.hdr__logo img{height:40px;width:auto}
+.hdr__logo img{height:52px;width:auto}
 .hdr__nav{display:flex;align-items:center;gap:28px;font:400 20px var(--type)}
 .hdr__nav a:not(.btn){text-decoration:none;position:relative}
 .hdr__nav a:not(.btn):hover{color:var(--red)}
@@ -176,7 +176,7 @@ a{color:inherit}
 /* stopka */
 .foot{margin-top:90px;background:var(--desk);border-top:3px solid #D5B98C;padding:34px 0 40px}
 .foot__in{display:flex;flex-direction:column;gap:6px;font:400 16px var(--type);letter-spacing:.03em}
-.foot img{height:34px;width:auto;margin-bottom:10px}
+.foot img{height:44px;width:auto;margin-bottom:10px}
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,120px);background:var(--ink);color:#fff;font:800 16px var(--hand);
   padding:12px 22px;border-radius:30px;transition:transform .25s;z-index:99}
 .toast.on{transform:translate(-50%,0)}
