@@ -243,6 +243,38 @@
   </div>
 </section>
 
+<section class="sec" id="od-czego-zaczac" aria-labelledby="h-guide">
+  <div class="wrap">
+    <div class="sec__head">
+      <p class="kicker rv"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>Przewodnik</p>
+      <h2 id="h-guide" class="rv">Od czego <span class="squig">zacząć</span>?</h2>
+      <p class="sec__lead rv">Kliknij to, co najbardziej pasuje do Twojej sytuacji, a pokażę, w&nbsp;czym mogę pomóc.</p>
+    </div>
+    <div class="guide" id="przewodnik">
+      <div class="rv">
+        <p class="guide__q">Z&nbsp;czym przychodzisz?</p>
+        <div class="chips" role="group" aria-label="Wybierz swoją sytuację">
+          <button class="chip" type="button" data-wybor="dotacje" aria-pressed="false" aria-controls="przewodnik-wynik"><i>1</i>Planuję inwestycję i&nbsp;szukam dofinansowania z&nbsp;UE</button>
+          <button class="chip" type="button" data-wybor="dane" aria-pressed="false" aria-controls="przewodnik-wynik"><i>2</i>Mam dane albo pomiary i&nbsp;chcę z&nbsp;nich więcej wyciągnąć</button>
+          <button class="chip" type="button" data-wybor="erp" aria-pressed="false" aria-controls="przewodnik-wynik"><i>3</i>Szukam systemu ERP dla firmy</button>
+          <button class="chip" type="button" data-wybor="nie-wiem" aria-pressed="false" aria-controls="przewodnik-wynik"><i>?</i>Jeszcze nie wiem, chcę porozmawiać</button>
+        </div>
+      </div>
+      <div class="guide__out rv" id="przewodnik-wynik" aria-live="polite">
+        <i class="tape" aria-hidden="true"></i>
+        <div class="guide__empty">
+          <svg viewBox="0 0 120 90" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 60 C30 20 60 70 80 30" stroke="#0B1220" stroke-width="4" stroke-dasharray="2 9"/><path d="M70 22 L84 28 L78 42" stroke="#E0452B" stroke-width="5"/><circle cx="96" cy="60" r="16" fill="#FEDA75" stroke="#0B1220" stroke-width="4"/><path d="M90 60 h12 M96 54 v12" stroke="#0B1220" stroke-width="4"/></svg>
+          <span>Wybierz jedną z&nbsp;opcji po lewej.</span>
+        </div>
+      </div>
+    </div>
+    <template id="wynik-dotacje"><i class="tape" aria-hidden="true"></i><span class="stamp">FUNDUSZE UE · OD 2013</span><h3>Sprawdzimy, skąd wziąć <span class="squig">dofinansowanie</span></h3><p>Doradzam w&nbsp;pozyskiwaniu środków unijnych i&nbsp;prowadzę szkolenia na ten temat. Mój własny projekt też został wybrany do dofinansowania (POIR, bon na innowacje).</p><div class="btns"><a class="btn btn--red btn--sm" href="#kontakt" data-temat="Fundusze UE (doradztwo, szkolenia)">Napisz w&nbsp;tej sprawie <i aria-hidden="true">→</i></a><a class="btn btn--sm" href="fundusze-ue.html">Więcej o&nbsp;usłudze</a></div></template>
+    <template id="wynik-dane"><i class="tape" aria-hidden="true"></i><span class="stamp">AI · POMIARY · OD 2021</span><h3>Dane, które coś <span class="squig">mówią</span></h3><p>Sztuczna inteligencja i&nbsp;analiza danych w&nbsp;projektach firmowych i&nbsp;badawczych: rekonstrukcja i&nbsp;analiza obrazów tomograficznych, wykrywanie anomalii, pomiary przepływów.</p><div class="btns"><a class="btn btn--red btn--sm" href="#kontakt" data-temat="Sztuczna inteligencja i dane">Napisz w&nbsp;tej sprawie <i aria-hidden="true">→</i></a><a class="btn btn--sm" href="sztuczna-inteligencja.html">AI i&nbsp;dane</a><a class="btn btn--sm" href="tomografia.html">Tomografia</a></div></template>
+    <template id="wynik-erp"><i class="tape" aria-hidden="true"></i><span class="stamp">SYSTEMY IT · OD 2010</span><h3>Comarch ERP: <span class="squig">XL, Optima, Klasyka</span></h3><p>Sprzedaż i&nbsp;wdrożenia systemów informatycznych oraz audyty techniczne. Jedna osoba od pierwszej rozmowy do końca współpracy.</p><div class="btns"><a class="btn btn--red btn--sm" href="#kontakt" data-temat="Systemy IT (sprzedaż, wdrożenia)">Napisz w&nbsp;tej sprawie <i aria-hidden="true">→</i></a><a class="btn btn--sm" href="systemy-it.html">Więcej o&nbsp;usłudze</a></div></template>
+    <template id="wynik-nie-wiem"><i class="tape" aria-hidden="true"></i><span class="stamp">ROZMOWA</span><h3>Zacznijmy od <span class="squig">rozmowy</span></h3><p>Opisz krótko, co chcesz osiągnąć. Odpowiadam osobiście i&nbsp;powiem wprost, czy mogę pomóc.</p><div class="btns"><a class="btn btn--red btn--sm" href="tel:+48505564400">Zadzwoń 505 564 400</a><a class="btn btn--sm" href="#kontakt" data-temat="Inne / nie wiem jeszcze">Napisz wiadomość</a></div></template>
+  </div>
+</section>
+
 <section class="sec" id="historia" aria-labelledby="h-hist">
   <div class="wrap">
     <div class="sec__head">
@@ -347,5 +379,6 @@
     els.forEach(function(el){io.observe(el)})}else{els.forEach(function(el){el.classList.add('in')})}
 })();
 </script>
+<script src="assets/szkic-ruch.js" defer></script>
 </body>
 </html>
