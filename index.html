@@ -7,8 +7,8 @@
 <meta name="description" content="WOJTEL Wojciech Wieczorek – jednoosobowa firma z Rzeszowa działająca od 2008 roku: doradztwo i szkolenia z funduszy UE, projekty B+R ze sztucznej inteligencji (tomografia, analiza danych), sprzedaż i wdrażanie systemów IT. Napisz lub zadzwoń: 505 564 400.">
 <meta name="author" content="Wojciech Wieczorek">
 <meta name="robots" content="index, follow, max-image-preview:large">
-<meta name="theme-color" content="#0e1a2b">
-<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#F4F6F9">
+<meta name="color-scheme" content="light">
 <link rel="canonical" href="https://wwieczor-commits.github.io/wojtel-ciemna/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pl_PL">
@@ -28,10 +28,8 @@
 <link rel="icon" href="assets/favicon-32.png?v=3" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=3">
 <link rel="manifest" href="assets/site.webmanifest?v=3">
-<link rel="preload" href="assets/fonts/Inter.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/fonts/IBMPlexMono-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/wojtel.css?v=7">
-<link rel="stylesheet" href="assets/wojtel-ciemna.css?v=6">
+<link rel="stylesheet" href="assets/fonts.css">
+<link rel="stylesheet" href="assets/szkic.css">
 <script>document.documentElement.className+=' js'</script>
 <script type="application/ld+json">
 {
@@ -65,12 +63,7 @@
         ]
       }
     },
-    {
-      "@type": "WebPage",
-      "name": "WOJTEL Wojciech Wieczorek – strona firmowa",
-      "inLanguage": "pl-PL",
-      "about": { "@id": "#wojtel" }
-    }
+    { "@type": "WebPage", "name": "WOJTEL Wojciech Wieczorek – strona firmowa", "inLanguage": "pl-PL", "about": { "@id": "#wojtel" } }
   ]
 }
 </script>
@@ -80,132 +73,171 @@
 
 <header class="hdr">
   <div class="wrap hdr__in">
-    <a class="hdr__logo" href="#start" aria-label="WOJTEL – początek strony"><img src="assets/img/wojtel-logo-b-biale.svg" alt="WOJTEL Wojciech Wieczorek" width="147" height="42"></a>
+    <a class="hdr__logo" href="#start" aria-label="WOJTEL – początek strony"><img src="assets/img/wojtel-logo-b-granat.svg" alt="WOJTEL Wojciech Wieczorek" width="147" height="42"></a>
     <button class="hdr__btn" type="button" aria-controls="nav" aria-expanded="false" aria-label="Menu"><span></span></button>
     <nav class="hdr__nav" id="nav" aria-label="Główna">
       <a href="#firma">O firmie</a>
       <a href="#uslugi">Usługi</a>
       <a href="#historia">Historia</a>
-      <a class="btn btn--navy btn--sm" href="#kontakt">Kontakt</a>
+      <a class="btn btn--red btn--sm" href="#kontakt">Kontakt</a>
     </nav>
   </div>
-  <div class="progress" aria-hidden="true"></div>
 </header>
 
 <main id="tresc">
 
 <section class="hero" id="start" aria-labelledby="h-start">
+  <svg class="hero__spark" viewBox="0 0 110 100" aria-hidden="true"><path d="M46 10 C50 38 56 44 84 48 C56 52 50 58 46 86 C42 58 36 52 8 48 C36 44 42 38 46 10 Z" fill="#FEDA75" stroke="#0B1220" stroke-width="4" stroke-linejoin="round"/><path d="M92 8 C93 16 95 18 103 19 C95 20 93 22 92 30 C91 22 89 20 81 19 C89 18 91 16 92 8 Z" fill="#E0452B"/></svg>
   <div class="wrap hero__in">
     <div class="hero__txt">
-      <p class="mono">Rzeszów · działalność od 1 marca 2008 · wpis w CEIDG</p>
-      <h1 id="h-start">
-        <span class="ln"><span>Technologia,</span></span>
-        <span class="ln"><span>wiedza i rzetelna</span></span>
-        <span class="ln"><span>współpraca.</span></span>
-      </h1>
-      <div class="hero__bar" aria-hidden="true"></div>
+      <p class="hero__meta"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>Rzeszów · działalność od 1 marca 2008 · wpis w CEIDG</p>
+      <h1 id="h-start">Technologia, <span class="hl">wiedza</span> i&nbsp;rzetelna <span class="ring">współpraca</span>.<svg class="ast" viewBox="0 0 64 64" aria-hidden="true"><g stroke="#E0452B" stroke-width="5" stroke-linecap="round"><path d="M32 6 L32 58"/><path d="M6 32 L58 32"/><path d="M13 13 L51 51"/><path d="M51 13 L13 51"/></g></svg></h1>
       <p class="hero__lead">WOJTEL to jednoosobowa firma Wojciecha Wieczorka. Fundusze UE, sztuczna inteligencja w&nbsp;pomiarach i&nbsp;systemy IT. <strong>Rozmawiasz bezpośrednio z&nbsp;właścicielem</strong>, bez pośredników i&nbsp;call center.</p>
       <div class="hero__cta">
         <a class="btn btn--red" href="#kontakt">Napisz do mnie <i aria-hidden="true">→</i></a>
-        <a class="btn btn--line" href="tel:+48505564400">Zadzwoń 505 564 400</a>
+        <a class="btn" href="tel:+48505564400">Zadzwoń 505 564 400</a>
       </div>
     </div>
-    <figure class="tomo">
-      <div class="tomo__box">
-        <svg viewBox="0 0 400 400" role="img" aria-label="Schemat tomografu: pierścień czujników, obracająca się wiązka skanująca i zrekonstruowany przekrój z wykrytą anomalią">
-          <g stroke="#1C2840" stroke-width="1"><path d="M0 100H400M0 200H400M0 300H400M100 0V400M200 0V400M300 0V400"></path></g>
-          <circle cx="200" cy="200" r="132" fill="none" stroke="#3A4A66" stroke-width="1.5"></circle>
-          <g id="tomoRing" fill="#0E1729" stroke="#8A96AA" stroke-width="1.5"></g>
-          <g class="tomo__beam">
-            <path d="M200 64 L118 320 L282 320 Z" fill="#E0452B" fill-opacity="0.08" stroke="#E0452B" stroke-opacity="0.5" stroke-width="1"></path>
-            <circle cx="200" cy="64" r="7" fill="#E0452B"></circle>
-          </g>
-          <g id="tomoGrid"></g>
-          <circle id="tomoA" cx="210" cy="210" r="30" fill="none" stroke="#E0452B" stroke-width="2"></circle>
-          <text id="tomoT" x="232" y="188" font-family="IBM Plex Mono, monospace" font-size="12" fill="#FF8C74">anomalia</text>
-          <path class="tomo__trace" d="M24 372 C60 372 70 352 96 352 S130 380 160 366 S210 330 240 350 S300 376 330 360 S366 340 376 348" fill="none" stroke="#8A96AA" stroke-width="1.5"></path>
-        </svg>
-        <div class="tomo__hud" aria-hidden="true"><span>kąt <b id="tomoAng">0°</b></span><span>pewność <b id="tomoConf">0,95</b></span></div>
+    <figure class="hero__pic">
+      <svg class="ill" viewBox="0 0 440 440" fill="none" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Ilustracja: monitor z przekrojem tomograficznym i wykrytą anomalią, dokument z pieczątką UE, moneta euro i wykres">
+        <!-- dokument UE -->
+        <g transform="rotate(-8 110 250)">
+          <path d="M40 150 H150 L180 180 V330 H40 Z" fill="#fff" stroke="#0B1220" stroke-width="4"/>
+          <path d="M150 150 V180 H180" stroke="#0B1220" stroke-width="3.5"/>
+          <g stroke="#0B1220" stroke-width="3.5"><path d="M60 196 H140"/><path d="M60 218 H160"/><path d="M60 240 H150"/><path d="M60 262 H110"/></g>
+          <path d="M62 306 c8 -12 16 8 24 -3 s14 -8 24 3" stroke="#E0452B" stroke-width="3"/>
+          <circle cx="146" cy="296" r="24" fill="#FEDA75" stroke="#0B1220" stroke-width="3.5"/>
+          <text x="146" y="303" text-anchor="middle" font-family="Shantell" font-weight="800" font-size="17" fill="#0B1220">UE</text>
+        </g>
+        <!-- monitor z tomografią -->
+        <rect x="150" y="40" width="260" height="190" rx="16" fill="#fff" stroke="#0B1220" stroke-width="4.5"/>
+        <path d="M266 230 L256 266 M294 230 L304 266 M236 268 H324" stroke="#0B1220" stroke-width="4.5"/>
+        <circle cx="280" cy="135" r="70" fill="#FBE3DD" stroke="#0B1220" stroke-width="3.5"/>
+        <g stroke="#0B1220" stroke-width="2.5" stroke-dasharray="2 8" opacity=".7"><path d="M210 135 H350"/><path d="M280 65 V205"/><path d="M231 86 L329 184"/><path d="M329 86 L231 184"/></g>
+        <circle cx="280" cy="135" r="38" stroke="#0B1220" stroke-width="2.5" stroke-dasharray="3 7"/>
+        <circle cx="306" cy="112" r="14" fill="#E0452B" stroke="#0B1220" stroke-width="3.5"/>
+        <rect x="330" y="10" width="92" height="40" rx="13" fill="#fff" stroke="#0B1220" stroke-width="3.5" transform="rotate(5 376 30)"/>
+        <text x="376" y="38" text-anchor="middle" font-family="Shantell" font-weight="800" font-size="19" fill="#0B1220" transform="rotate(5 376 30)">anomalia</text>
+        <path d="M352 52 L316 100" stroke="#0B1220" stroke-width="3" stroke-dasharray="1 8"/>
+        <!-- moneta -->
+        <circle cx="390" cy="318" r="22" fill="#fff" stroke="#0B1220" stroke-width="3.5"/>
+        <circle cx="356" cy="346" r="40" fill="#FEDA75" stroke="#0B1220" stroke-width="4"/>
+        <circle cx="356" cy="346" r="29" stroke="#0B1220" stroke-width="2.5" stroke-dasharray="3 7"/>
+        <text x="356" y="362" text-anchor="middle" font-family="Shantell" font-weight="800" font-size="42" fill="#0B1220">€</text>
+        <!-- karteczka z wykresem -->
+        <g transform="rotate(4 260 360)">
+          <rect x="196" y="300" width="124" height="104" rx="8" fill="#DCE6F7" stroke="#0B1220" stroke-width="3.5"/>
+          <rect x="236" y="290" width="46" height="18" fill="#E0452B" opacity=".75" transform="rotate(-6 259 299)"/>
+          <path d="M210 388 H306" stroke="#0B1220" stroke-width="3"/>
+          <rect x="218" y="360" width="16" height="28" fill="#FEDA75" stroke="#0B1220" stroke-width="3"/>
+          <rect x="242" y="346" width="16" height="42" fill="#fff" stroke="#0B1220" stroke-width="3"/>
+          <rect x="266" y="330" width="16" height="58" fill="#E0452B" stroke="#0B1220" stroke-width="3"/>
+        </g>
+        <g stroke="#FEDA75" stroke-width="4"><path d="M118 70 L126 86"/><path d="M96 96 L112 98"/><path d="M140 58 L140 74"/></g>
+      </svg>
+      <div class="pills" aria-hidden="true">
+        <div class="pill"><b>3</b>Systemy IT</div><div class="pill-link"></div>
+        <div class="pill"><b>2</b>AI i pomiary</div><div class="pill-link"></div>
+        <div class="pill"><b>1</b>Fundusze UE</div>
       </div>
-      <figcaption><span>FIG. 00</span> rekonstrukcja przekroju i wykrycie anomalii (ilustracja)</figcaption>
     </figure>
   </div>
+  <div class="desk"><div class="wrap"><a href="#firma">przewiń&nbsp;&nbsp;↓</a><a href="tel:+48505564400" class="hide-s">tel. 505 564 400</a></div></div>
 </section>
 
 <section class="stats" aria-label="WOJTEL w liczbach">
   <div class="wrap stats__in">
-    <p class="stat"><b data-years="2008-03-01">18</b><span>lat działalności<br>(od marca 2008)</span></p>
-    <p class="stat"><b data-count="6">6</b><span>projektów B+R<br>z obszaru AI (od 2021 r.)</span></p>
-    <p class="stat stat--red"><b data-count="1">1</b><span>projekt wybrany<br>do dofinansowania z UE</span></p>
+    <p class="note note--yel rv"><i class="tape" aria-hidden="true"></i><b class="n" data-years="2008-03-01">18</b><span>lat działalności<br>(od marca 2008)</span></p>
+    <p class="note note--white rv"><i class="corner" aria-hidden="true"></i><b class="n">6</b><span>projektów B+R<br>z obszaru AI (od 2021 r.)</span></p>
+    <p class="note note--pink rv"><i class="pin" aria-hidden="true"></i><b class="n">1</b><span>projekt wybrany<br>do dofinansowania z UE</span></p>
   </div>
 </section>
 
 <section class="sec" id="firma" aria-labelledby="h-firma">
   <div class="wrap">
     <div class="sec__head">
-      <h2 id="h-firma" class="rv">Firma z nazwiskiem</h2>
+      <p class="kicker rv"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>O firmie</p>
+      <h2 id="h-firma" class="rv">Firma z <span class="squig">nazwiskiem</span></h2>
       <p class="sec__lead rv">Wszystko pod jednym nazwiskiem: to ja odpowiadam za efekt.</p>
     </div>
     <div class="about">
-      <div class="about__txt">
-        <p class="lead rv"><strong>WOJTEL Wojciech Wieczorek</strong> to indywidualna działalność gospodarcza z&nbsp;Rzeszowa, wpisana do CEIDG i&nbsp;prowadzona od <strong>1&nbsp;marca 2008&nbsp;r.</strong> Zajmuję się sprzedażą i&nbsp;wdrażaniem systemów informatycznych, doradztwem w&nbsp;pozyskiwaniu funduszy UE oraz projektami badawczo-rozwojowymi.</p>
-      </div>
-      <div class="about__txt">
+      <div>
+        <p class="lead rv"><strong>WOJTEL Wojciech Wieczorek</strong> to indywidualna działalność gospodarcza z&nbsp;Rzeszowa, wpisana do CEIDG i&nbsp;prowadzona od <span class="mk"><strong>1&nbsp;marca 2008&nbsp;r.</strong></span> Zajmuję się sprzedażą i&nbsp;wdrażaniem systemów informatycznych, doradztwem w&nbsp;pozyskiwaniu funduszy UE oraz projektami badawczo-rozwojowymi.</p>
         <p class="rv">W&nbsp;ostatnich latach zajmuję się głównie projektami ze sztucznej inteligencji i&nbsp;analizy danych. Wcześniej przez wiele lat sprzedawałem i&nbsp;wdrażałem systemy IT oraz doradzałem w&nbsp;pozyskiwaniu dotacji.</p>
         <p class="rv"><strong>Wiedza:</strong> sztuczna inteligencja i&nbsp;analiza danych, systemy informatyczne dla firm, fundusze unijne, a&nbsp;także prowadzenie projektów i&nbsp;współpraca z&nbsp;zespołem.</p>
-        <article class="dossier rv" aria-labelledby="h-dos">
-          <span class="dossier__tag">PROJEKT UE</span>
-          <h3 id="h-dos">Wielosensorowy, mobilny czujnik siatkowy do pomiarów przepływów</h3>
-          <p>Projekt wybrany do dofinansowania w&nbsp;ramach Programu Operacyjnego Inteligentny Rozwój 2014–2020 („Bony na innowacje dla MŚP”).</p>
-          <a class="btn btn--red btn--sm" href="projekt-ue.html">Zobacz projekt <i aria-hidden="true">→</i></a>
-        </article>
       </div>
+      <article class="polaroid rv" aria-labelledby="h-dos">
+        <i class="tape" aria-hidden="true"></i>
+        <svg class="polaroid__draw" viewBox="0 0 400 170" fill="none" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Rysunek: rura pomiarowa z czujnikiem siatkowym">
+          <rect x="20" y="58" width="360" height="62" rx="10" fill="#fff" stroke="#0B1220" stroke-width="4"/>
+          <rect x="150" y="40" width="22" height="98" rx="5" fill="#FEDA75" stroke="#0B1220" stroke-width="4"/>
+          <rect x="228" y="40" width="22" height="98" rx="5" fill="#FEDA75" stroke="#0B1220" stroke-width="4"/>
+          <g stroke="#E0452B" stroke-width="3"><path d="M184 62 V116 M200 62 V116 M216 62 V116 M174 72 H226 M174 89 H226 M174 106 H226"/></g>
+          <g stroke="#34507A" stroke-width="3" stroke-dasharray="2 9"><path d="M36 76 H136"/><path d="M36 102 H136"/><path d="M264 76 H364"/><path d="M264 102 H364"/></g>
+          <path d="M346 89 L366 89 M356 81 L366 89 L356 97" stroke="#0B1220" stroke-width="3.5"/>
+          <path d="M200 40 V18" stroke="#0B1220" stroke-width="3.5"/><circle cx="200" cy="14" r="10" fill="#fff" stroke="#0B1220" stroke-width="3.5"/>
+          <path d="M280 20 c8 -10 16 10 24 0 s16 -10 24 0" stroke="#E0452B" stroke-width="3"/>
+          <rect x="270" y="132" width="100" height="30" rx="10" fill="#fff" stroke="#0B1220" stroke-width="3" transform="rotate(-3 320 147)"/>
+          <text x="320" y="153" text-anchor="middle" font-family="Shantell" font-weight="800" font-size="16" fill="#0B1220" transform="rotate(-3 320 147)">Q = ?</text>
+        </svg>
+        <span class="stamp">PROJEKT UE</span>
+        <h3 id="h-dos">Wielosensorowy, mobilny czujnik siatkowy do pomiarów przepływów</h3>
+        <p>Projekt wybrany do dofinansowania w&nbsp;ramach Programu Operacyjnego Inteligentny Rozwój 2014–2020 („Bony na innowacje dla MŚP”).</p>
+        <p style="margin-top:16px"><a class="btn btn--red btn--sm" href="projekt-ue.html">Zobacz projekt <i aria-hidden="true">→</i></a></p>
+      </article>
     </div>
   </div>
 </section>
 
-<section class="sec sec--alt" id="uslugi" aria-labelledby="h-uslugi">
+<section class="sec" id="uslugi" aria-labelledby="h-uslugi">
   <div class="wrap">
     <div class="sec__head">
-      <h2 id="h-uslugi" class="rv">Czym się zajmuję</h2>
-      <p class="sec__lead rv">Poniżej to, czym zajmuję się w&nbsp;praktyce; każdy obszar odpowiada kodom PKD z&nbsp;CEIDG. Szczegóły ustalamy indywidualnie. Kliknij kartę, a&nbsp;otworzy się gotowy e-mail.</p>
+      <p class="kicker rv"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>Usługi</p>
+      <h2 id="h-uslugi" class="rv">Czym się <span class="squig">zajmuję</span></h2>
+      <p class="sec__lead rv">Poniżej to, czym zajmuję się w&nbsp;praktyce; każdy obszar odpowiada kodom PKD z&nbsp;CEIDG. Szczegóły ustalamy indywidualnie. Kliknij kartę, żeby zobaczyć szczegóły albo napisać e-mail.</p>
     </div>
     <div class="cards">
-      <a class="card card--main rv" href="mailto:wwieczor@gmail.com?subject=Zapytanie%3A%20Fundusze%20UE%3A%20doradztwo%20i%20szkolenia">
+      <a class="card card--main rv" href="fundusze-ue.html">
+        <svg class="card__ico" viewBox="0 0 64 64" fill="none" stroke="#0B1220" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 6 H38 L48 16 V58 H10 Z" fill="#fff"/><path d="M38 6 V16 H48"/><path d="M17 24 H38 M17 32 H40 M17 40 H30"/><circle cx="44" cy="46" r="13" fill="#E0452B"/><text x="44" y="52" text-anchor="middle" font-family="Shantell" font-weight="800" font-size="16" fill="#fff" stroke="none">€</text></svg>
         <span class="card__pkd">PKD 85.59.B · działalność przeważająca</span>
         <h3>Fundusze UE: doradztwo i&nbsp;szkolenia</h3>
         <p>Doradztwo w&nbsp;zakresie pozyskiwania środków unijnych oraz szkolenia na ten temat. Zajmuję się tym od 2013&nbsp;r.</p>
-        <span class="card__go">Zapytaj <i aria-hidden="true">→</i></span>
+        <span class="card__go">Więcej →</span>
       </a>
-      <a class="card rv" href="mailto:wwieczor@gmail.com?subject=Zapytanie%3A%20Tomografia%20i%20pomiary">
+      <a class="card rv" href="tomografia.html">
+        <svg class="card__ico" viewBox="0 0 64 64" fill="none" stroke="#0B1220" stroke-width="3" stroke-linecap="round" aria-hidden="true"><circle cx="30" cy="32" r="24" fill="#FBE3DD"/><g stroke-width="2" stroke-dasharray="2 5"><path d="M6 32 H54 M30 8 V56"/></g><circle cx="30" cy="32" r="12" stroke-width="2" stroke-dasharray="3 5"/><circle cx="39" cy="24" r="6" fill="#E0452B"/><path d="M48 10 L58 4" stroke="#E0452B"/></svg>
         <span class="card__pkd">PKD 26.51.Z</span>
         <h3>Tomografia i&nbsp;pomiary</h3>
         <p>Algorytmy do rekonstrukcji i&nbsp;analizy obrazów tomograficznych, wykrywanie anomalii oraz prace nad wielosensorowym, mobilnym czujnikiem siatkowym do pomiarów przepływów.</p>
-        <span class="card__go">Zapytaj <i aria-hidden="true">→</i></span>
+        <span class="card__go">Więcej →</span>
       </a>
-      <a class="card rv" href="mailto:wwieczor@gmail.com?subject=Zapytanie%3A%20Sztuczna%20inteligencja%20i%20dane">
+      <a class="card rv" href="sztuczna-inteligencja.html">
+        <svg class="card__ico" viewBox="0 0 64 64" fill="none" stroke="#0B1220" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M14 18 L46 12 M14 18 L28 50 M46 12 L28 50 M46 12 L54 44 M28 50 L54 44"/><circle cx="14" cy="18" r="8" fill="#FEDA75"/><circle cx="46" cy="12" r="8" fill="#E0452B"/><circle cx="28" cy="50" r="8" fill="#fff"/><circle cx="54" cy="44" r="6" fill="#DCE6F7"/></svg>
         <span class="card__pkd">PKD 62.09.Z</span>
         <h3>Sztuczna inteligencja i&nbsp;dane</h3>
         <p>Wykorzystanie sztucznej inteligencji i&nbsp;analizy danych w&nbsp;projektach firmowych i&nbsp;badawczych.</p>
-        <span class="card__go">Zapytaj <i aria-hidden="true">→</i></span>
+        <span class="card__go">Więcej →</span>
       </a>
-      <a class="card rv" href="mailto:wwieczor@gmail.com?subject=Zapytanie%3A%20Systemy%20IT%3A%20sprzeda%C5%BC%20i%20wdro%C5%BCenia">
+      <a class="card rv" href="systemy-it.html">
+        <svg class="card__ico" viewBox="0 0 64 64" fill="none" stroke="#0B1220" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="52" height="38" rx="5" fill="#fff"/><path d="M24 46 L20 58 M36 46 L40 58 M14 58 H46"/><rect x="12" y="28" width="8" height="12" fill="#FEDA75"/><rect x="25" y="22" width="8" height="18" fill="#fff"/><rect x="38" y="15" width="8" height="25" fill="#E0452B"/></svg>
         <span class="card__pkd">PKD 46.19.Z</span>
         <h3>Systemy IT: sprzedaż i&nbsp;wdrożenia</h3>
         <p>Pośrednictwo w&nbsp;sprzedaży systemów informatycznych, w&nbsp;tym Comarch ERP (XL, Optima, Klasyka), oraz kierowanie zespołem wdrożeniowym.</p>
-        <span class="card__go">Zapytaj <i aria-hidden="true">→</i></span>
+        <span class="card__go">Więcej →</span>
       </a>
-      <a class="card rv" href="mailto:wwieczor@gmail.com?subject=Zapytanie%3A%20Sprzeda%C5%BC%20detaliczna">
+      <a class="card card--minor rv" href="mailto:wwieczor@gmail.com?subject=Zapytanie%3A%20Sprzeda%C5%BC%20detaliczna">
+        <svg class="card__ico" viewBox="0 0 64 64" fill="none" stroke="#0B1220" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22 H52 L48 58 H16 Z" fill="#DDF0E6"/><path d="M22 28 V16 a10 10 0 0 1 20 0 V28"/></svg>
         <span class="card__pkd">PKD 47.99.Z</span>
         <h3>Sprzedaż detaliczna</h3>
         <p>Pozostała sprzedaż detaliczna prowadzona poza siecią sklepową, straganami i&nbsp;targowiskami.</p>
-        <span class="card__go">Zapytaj <i aria-hidden="true">→</i></span>
+        <span class="card__go">Zapytaj →</span>
       </a>
-      <a class="card rv" href="mailto:wwieczor@gmail.com?subject=Zapytanie%3A%20Po%C5%9Brednictwo%20finansowe">
+      <a class="card card--minor rv" href="mailto:wwieczor@gmail.com?subject=Zapytanie%3A%20Po%C5%9Brednictwo%20finansowe">
+        <svg class="card__ico" viewBox="0 0 64 64" fill="none" stroke="#0B1220" stroke-width="3" stroke-linecap="round" aria-hidden="true"><ellipse cx="26" cy="46" rx="18" ry="7" fill="#FEDA75"/><path d="M8 46 V38"/><path d="M44 46 V38"/><ellipse cx="26" cy="38" rx="18" ry="7" fill="#FEDA75"/><ellipse cx="26" cy="30" rx="18" ry="7" fill="#FEDA75"/><path d="M42 16 H58 M52 10 L58 16 L52 22" stroke="#E0452B"/></svg>
         <span class="card__pkd">PKD 64.19.Z · 66.19.Z</span>
         <h3>Pośrednictwo finansowe</h3>
         <p>Pozostałe pośrednictwo pieniężne oraz działalność wspomagająca usługi finansowe.</p>
-        <span class="card__go">Zapytaj <i aria-hidden="true">→</i></span>
+        <span class="card__go">Zapytaj →</span>
       </a>
     </div>
   </div>
@@ -214,23 +246,24 @@
 <section class="sec" id="historia" aria-labelledby="h-hist">
   <div class="wrap">
     <div class="sec__head">
-      <h2 id="h-hist" class="rv">Od 2008 bez przerwy</h2>
+      <p class="kicker rv"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>Historia</p>
+      <h2 id="h-hist" class="rv">Od 2008 <span class="squig">bez przerwy</span></h2>
       <p class="sec__lead rv">Historia i&nbsp;sposób pracy.</p>
     </div>
-    <ol class="tl" style="list-style:none;margin:0;padding:0">
-      <li class="tl__item"><span class="tl__year">2005</span><div class="tl__body"><h3>Przed firmą: telekomunikacja</h3><p>Początek zawodowej drogi: wsparcie techniczne i&nbsp;konfiguracja usług dostępu do Internetu, a&nbsp;od września 2005&nbsp;r. doradztwo i&nbsp;sprzedaż usług telekomunikacyjnych dla klientów biznesowych.</p></div></li>
-      <li class="tl__item"><span class="tl__year">2008</span><div class="tl__body"><h3>Start działalności</h3><p>1&nbsp;marca 2008&nbsp;r. WOJTEL zostaje wpisany do rejestru działalności gospodarczej. Zaczyna się historia jednoosobowej firmy z&nbsp;Rzeszowa.</p></div></li>
-      <li class="tl__item"><span class="tl__year">2010</span><div class="tl__body"><h3>Systemy ERP</h3><p>Kierowanie zespołem wdrożeniowym systemów informatycznych, potem sprzedaż i&nbsp;wdrażanie systemów Comarch oraz audyty techniczne.</p></div></li>
-      <li class="tl__item"><span class="tl__year">2013</span><div class="tl__body"><h3>Fundusze unijne</h3><p>Doradztwo i&nbsp;szkolenia z&nbsp;pozyskiwania środków UE. Ten obszar prowadzę do dziś.</p></div></li>
-      <li class="tl__item"><span class="tl__year">2019</span><div class="tl__body"><h3>Bon na innowacje</h3><p>Projekt czujnika siatkowego do pomiarów przepływów trafia na listę projektów wybranych do dofinansowania (POIR, poddziałanie 2.3.2, konkurs 3/2019).</p></div></li>
-      <li class="tl__item"><span class="tl__year">2021</span><div class="tl__body"><h3>Projekty B+R</h3><p>Od 2021 roku biorę udział w&nbsp;projektach badawczych, w&nbsp;których wykorzystuję sztuczną inteligencję do analizy danych i&nbsp;rozwiązywania praktycznych problemów.</p></div></li>
-      <li class="tl__item"><span class="tl__year">2022</span><div class="tl__body"><h3>Sprzedaż i&nbsp;doradztwo</h3><p>Równolegle do prac B+R: sprzedaż systemów Comarch, pozyskiwanie klientów, doradztwo i&nbsp;szkolenia z&nbsp;funduszy UE, kierowanie zespołem wdrożeniowym.</p></div></li>
-      <li class="tl__item"><span class="tl__year">2025</span><div class="tl__body"><h3>Nowe technologie</h3><p>Projekty badawczo-rozwojowe z&nbsp;wykorzystaniem sztucznej inteligencji i&nbsp;analizy danych.</p></div></li>
-      <li class="tl__item"><span class="tl__year">2026</span><div class="tl__body"><h3>Dalej, tą samą zasadą</h3><p>Kolejne projekty z&nbsp;wykorzystaniem sztucznej inteligencji w&nbsp;pomiarach. Firma działa nieprzerwanie od ponad 18 lat. Kolejny rozdział? Zależy od Twojego projektu.</p></div></li>
+    <ol class="tl">
+      <li class="rv"><span class="tl__year">2005</span><div class="tl__body"><h3>Przed firmą: telekomunikacja</h3><p>Początek zawodowej drogi: wsparcie techniczne i&nbsp;konfiguracja usług dostępu do Internetu, a&nbsp;od września 2005&nbsp;r. doradztwo i&nbsp;sprzedaż usług telekomunikacyjnych dla klientów biznesowych.</p></div></li>
+      <li class="rv"><span class="tl__year">2008</span><div class="tl__body"><h3>Start działalności</h3><p>1&nbsp;marca 2008&nbsp;r. WOJTEL zostaje wpisany do rejestru działalności gospodarczej. Zaczyna się historia jednoosobowej firmy z&nbsp;Rzeszowa.</p></div></li>
+      <li class="rv"><span class="tl__year">2010</span><div class="tl__body"><h3>Systemy ERP</h3><p>Kierowanie zespołem wdrożeniowym systemów informatycznych, potem sprzedaż i&nbsp;wdrażanie systemów Comarch oraz audyty techniczne.</p></div></li>
+      <li class="rv"><span class="tl__year">2013</span><div class="tl__body"><h3>Fundusze unijne</h3><p>Doradztwo i&nbsp;szkolenia z&nbsp;pozyskiwania środków UE. Ten obszar prowadzę do dziś.</p></div></li>
+      <li class="rv"><span class="tl__year">2019</span><div class="tl__body"><h3>Bon na innowacje</h3><p>Projekt czujnika siatkowego do pomiarów przepływów trafia na listę projektów wybranych do dofinansowania (POIR, poddziałanie 2.3.2, konkurs 3/2019).</p></div></li>
+      <li class="rv"><span class="tl__year">2021</span><div class="tl__body"><h3>Projekty B+R</h3><p>Od 2021 roku biorę udział w&nbsp;projektach badawczych, w&nbsp;których wykorzystuję sztuczną inteligencję do analizy danych i&nbsp;rozwiązywania praktycznych problemów.</p></div></li>
+      <li class="rv"><span class="tl__year">2022</span><div class="tl__body"><h3>Sprzedaż i&nbsp;doradztwo</h3><p>Równolegle do prac B+R: sprzedaż systemów Comarch, pozyskiwanie klientów, doradztwo i&nbsp;szkolenia z&nbsp;funduszy UE, kierowanie zespołem wdrożeniowym.</p></div></li>
+      <li class="rv"><span class="tl__year">2025</span><div class="tl__body"><h3>Nowe technologie</h3><p>Projekty badawczo-rozwojowe z&nbsp;wykorzystaniem sztucznej inteligencji i&nbsp;analizy danych.</p></div></li>
+      <li class="rv"><span class="tl__year">2026</span><div class="tl__body"><h3>Dalej, tą samą zasadą</h3><p>Kolejne projekty z&nbsp;wykorzystaniem sztucznej inteligencji w&nbsp;pomiarach. Firma działa nieprzerwanie od ponad 18 lat. Kolejny rozdział? Zależy od Twojego projektu.</p></div></li>
     </ol>
 
-    <h2 class="rv" style="margin-top:96px;font-size:clamp(30px,3vw,42px)">Jak pracuję</h2>
-    <div class="steps" style="margin-top:28px">
+    <h2 class="rv" style="margin-top:90px;font-size:clamp(36px,4vw,54px)">Jak <span class="squig">pracuję</span></h2>
+    <div class="steps">
       <div class="step rv"><span class="step__no">1</span><h3>Rozmowa</h3><p>Krótki telefon lub e-mail: jaki jest cel, jakie są dane i&nbsp;na kiedy ma być gotowe.</p></div>
       <div class="step rv"><span class="step__no">2</span><h3>Propozycja</h3><p>Konkretny zakres, termin i&nbsp;wycena, bez drobnego druku.</p></div>
       <div class="step rv"><span class="step__no">3</span><h3>Realizacja</h3><p>Pracuję samodzielnie. Wyniki sprawdzam i&nbsp;testuję, zanim je przekażę, a&nbsp;o&nbsp;postępach informuję na bieżąco.</p></div>
@@ -244,11 +277,11 @@
   </div>
 </section>
 
-
 <section class="sec contact" id="kontakt" aria-labelledby="h-kontakt">
   <div class="wrap">
     <div class="sec__head">
-      <h2 id="h-kontakt" class="rv">Porozmawiajmy o Twoim projekcie</h2>
+      <p class="kicker rv"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>Kontakt</p>
+      <h2 id="h-kontakt" class="rv">Porozmawiajmy o&nbsp;Twoim <span class="squig">projekcie</span></h2>
       <p class="sec__lead rv">Napisz lub zadzwoń. Odpowiadam osobiście.</p>
     </div>
     <div class="contact__grid">
@@ -280,7 +313,7 @@
 
 <footer class="foot">
   <div class="wrap foot__in">
-    <img src="assets/img/wojtel-logo-b-biale.svg" alt="WOJTEL" width="112" height="32">
+    <img src="assets/img/wojtel-logo-b-granat.svg" alt="WOJTEL" width="112" height="32">
     <p>© <span id="yr">2026</span> WOJTEL Wojciech Wieczorek · NIP 8133361534 · REGON 180300604 · <a href="projekt-ue.html">Projekt UE</a></p>
     <p>Prawa autorskie: Wojciech Wieczorek &amp; Anna Mikos. Wszelkie prawa zastrzeżone.</p>
     <p>Strona nie używa cookies ani zewnętrznych skryptów śledzących.</p>
@@ -288,9 +321,31 @@
 </footer>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="assets/wojtel.js?v=5" defer></script>
-<script src="assets/tomograf.js?v=3" defer></script>
+<script>
+(function(){
+  var btn=document.querySelector('.hdr__btn'),nav=document.getElementById('nav');
+  btn.addEventListener('click',function(){var o=nav.classList.toggle('open');btn.setAttribute('aria-expanded',o)});
+  nav.addEventListener('click',function(e){if(e.target.tagName==='A'){nav.classList.remove('open');btn.setAttribute('aria-expanded',false)}});
+  var t=document.getElementById('toast'),tm;
+  function toast(m){t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){t.classList.remove('on')},1800)}
+  document.querySelectorAll('[data-copy]').forEach(function(b){b.addEventListener('click',function(){
+    var v=b.getAttribute('data-copy');
+    if(navigator.clipboard){navigator.clipboard.writeText(v).then(function(){toast('Skopiowano: '+v)},function(){toast(v)})}else{toast(v)}
+  })});
+  var y=document.querySelector('[data-years]');
+  if(y){var d=new Date(y.getAttribute('data-years')),n=new Date(),a=n.getFullYear()-d.getFullYear();
+    if(n.getMonth()<d.getMonth()||(n.getMonth()===d.getMonth()&&n.getDate()<d.getDate()))a--;y.textContent=a}
+  document.getElementById('yr').textContent=new Date().getFullYear();
+  var f=document.getElementById('mailForm');
+  f.addEventListener('submit',function(e){e.preventDefault();
+    var g=function(id){return document.getElementById(id).value.trim()};
+    var s='Zapytanie: '+g('f-topic');
+    var b=g('f-msg')+'\n\n--\n'+g('f-name')+'\n'+g('f-tel');
+    location.href='mailto:wwieczor@gmail.com?subject='+encodeURIComponent(s)+'&body='+encodeURIComponent(b)});
+  var els=document.querySelectorAll('.rv');
+  if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}})},{rootMargin:'0px 0px -8% 0px'});
+    els.forEach(function(el){io.observe(el)})}else{els.forEach(function(el){el.classList.add('in')})}
+})();
+</script>
 </body>
 </html>
-
-<!-- aktualizacja: 2026-11-11 -->
